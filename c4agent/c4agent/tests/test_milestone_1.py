@@ -1,10 +1,12 @@
 # Copyright (c) 2026, Connect 4 systems and contributors
 # For license information, please see license.txt
 
-import frappe
-from frappe.test_runner import make_test_records
-from frappe.tests.utils import FrappeTestCase, change_settings
 from datetime import datetime, timedelta
+
+import frappe
+from frappe.tests.utils import FrappeTestCase
+
+from c4agent.c4agent.services.shipment import make_import_shipment
 
 
 class TestImportShipment(FrappeTestCase):
@@ -89,6 +91,18 @@ class TestImportShipment(FrappeTestCase):
 		shipment.insert()
 		self.assertEqual(shipment.shipment_status, "Draft")
 		self.assertIsNotNone(shipment.shipment_title)
+
+	def test_map_purchase_order_to_unsaved_import_shipment(self):
+		"""The PO action must open a populated draft without inserting it."""
+		po = self.create_test_po()
+
+		shipment = make_import_shipment(po)
+
+		self.assertTrue(shipment.is_new())
+		self.assertEqual(shipment.purchase_order, po)
+		self.assertEqual(shipment.supplier, self.supplier)
+		self.assertEqual(len(shipment.items), 1)
+		self.assertEqual(shipment.items[0].ordered_qty, 100)
 	
 	def test_reject_supplier_mismatch(self):
 		"""Test that supplier mismatch with PO is rejected"""
@@ -172,8 +186,8 @@ class TestImportShipment(FrappeTestCase):
 		# Verify container exists
 		self.assertEqual(container.import_shipment, shipment.name)
 	
-	def test_duplicate_container_warning(self):
-		"""Test warning on duplicate container number"""
+	def test_duplicate_container_rejected(self):
+		"""A physical container number must be unique."""
 		po = self.create_test_po()
 		shipment = frappe.get_doc({
 			"doctype": "Import Shipment",
@@ -192,18 +206,41 @@ class TestImportShipment(FrappeTestCase):
 		})
 		container1.insert()
 		
-		# Create second container with same number (should warn)
+		# Create second container with same number (must be rejected)
 		container2 = frappe.get_doc({
 			"doctype": "Import Container",
 			"import_shipment": shipment.name,
 			"container_number": "DUP-CNT-001",
 			"container_type": "40GP"
 		})
-		# This should not raise, but should show warning
-		try:
+		with self.assertRaises(frappe.ValidationError):
 			container2.insert()
-		except:
-			pass  # Expected behavior
+
+	def test_container_updates_shipment_summary(self):
+		"""Saving a container must immediately update its parent totals."""
+		po = self.create_test_po()
+		shipment = frappe.get_doc({
+			"doctype": "Import Shipment",
+			"company": self.company,
+			"supplier": self.supplier,
+			"purchase_order": po,
+		}).insert()
+
+		frappe.get_doc({
+			"doctype": "Import Container",
+			"import_shipment": shipment.name,
+			"container_number": "SUMMARY-CNT-001",
+			"container_type": "40HC",
+			"packages": 25,
+			"gross_weight": 12000,
+			"cbm": 50,
+		}).insert()
+
+		shipment.reload()
+		self.assertEqual(shipment.container_count, 1)
+		self.assertEqual(shipment.total_packages, 25)
+		self.assertEqual(shipment.total_gross_weight, 12000)
+		self.assertEqual(shipment.total_cbm, 50)
 
 
 class TestImportContainer(FrappeTestCase):
@@ -225,6 +262,15 @@ class TestImportContainer(FrappeTestCase):
 			frappe.get_doc({
 				"doctype": "Supplier",
 				"supplier_name": self.supplier
+			}).insert(ignore_permissions=True)
+
+		if not frappe.db.exists("Item", "TEST-ITEM"):
+			frappe.get_doc({
+				"doctype": "Item",
+				"item_code": "TEST-ITEM",
+				"item_name": "Container Test Item",
+				"item_group": "All Item Groups",
+				"stock_uom": "Nos",
 			}).insert(ignore_permissions=True)
 		
 		po = frappe.get_doc({
@@ -294,3 +340,29 @@ class TestShippingLine(FrappeTestCase):
 		
 		self.assertEqual(shipping_line.shipping_line_name, "Test Shipping Co")
 		self.assertFalse(shipping_line.disabled)
+
+
+class TestC4agentSetup(FrappeTestCase):
+	"""Verify app-owned setup records created by install or migrate."""
+
+	def test_roles_and_shipment_workflow_exist(self):
+		for role in (
+			"Import User",
+			"Import Manager",
+			"Customs User",
+			"Customs Manager",
+			"Finance User",
+			"Finance Manager",
+		):
+			self.assertTrue(frappe.db.exists("Role", role))
+
+		self.assertTrue(
+			frappe.db.exists(
+				"Workflow",
+				{
+					"workflow_name": "Import Shipment Lifecycle",
+					"document_type": "Import Shipment",
+					"is_active": 1,
+				},
+			)
+		)

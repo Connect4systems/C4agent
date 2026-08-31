@@ -8,7 +8,7 @@ app_license = "mit"
 # Apps
 # ------------------
 
-# required_apps = []
+required_apps = ["erpnext"]
 
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
@@ -44,7 +44,8 @@ app_license = "mit"
 
 # include js in doctype views
 doctype_js = {
-	"Purchase Order": "public/js/purchase_order.js"
+	"Purchase Order": "public/js/purchase_order.js",
+	"Purchase Receipt": "public/js/purchase_receipt.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -84,7 +85,9 @@ doctype_js = {
 # Installation
 # ------------
 
-after_install = "c4agent.c4agent.setup.create_c4agent_custom_fields"
+before_install = "c4agent.c4agent.setup.setup_c4agent_roles"
+after_install = "c4agent.c4agent.setup.setup_c4agent"
+after_migrate = "c4agent.c4agent.setup.setup_c4agent"
 
 # Uninstallation
 # ------------

@@ -13,6 +13,7 @@
 ```bash
 cd /path/to/frappe-bench
 bench install-app c4agent
+bench --site {site_name} migrate
 bench --site {site_name} clear-cache
 ```
 
@@ -26,6 +27,11 @@ bench --site {site_name} clear-cache
 ---
 
 ## ✅ Testing Workflow (Step-by-Step)
+
+### Test Role Assignment
+
+- Give the tester **Import User** as the base shipment edit role.
+- Add **Import Manager** to test Confirm Order, receipt, close, and cancel actions.
 
 ### STEP 1: Create a Purchase Order
 
@@ -69,19 +75,18 @@ bench --site {site_name} clear-cache
 ### STEP 3: Update Status (Workflow Test)
 
 1. **From Draft status**:
-   - Click status field
-   - Change to **"Ordered"**
-   - Save
+   - Use the workflow action **"Confirm Order"**
+   - Status changes to **"Ordered"**
 
 2. **From Ordered status**:
-   - Click status field
-   - Change to **"Booked"**
-   - Save
+   - Confirm Shipping Line and ETD are filled
+   - Use **"Confirm Booking"**
+   - Status changes to **"Booked"**
 
 3. **From Booked status**:
-   - Click status field
-   - Change to **"In Transit"**
-   - Save
+   - Set **Actual Departure Date**
+   - Use **"Confirm Departure"**
+   - Status changes to **"In Transit"**
 
 ✅ **Expected Result**: Each status transition succeeds without error
 
@@ -101,7 +106,7 @@ bench --site {site_name} clear-cache
    - **CBM**: 25
 
 5. **Save**
-6. **Try creating another container** with same number (should warn)
+6. **Try creating another container** with the same number (must be rejected)
 
 ✅ **Expected Result**: Container created, shipment updates container_count
 
@@ -146,15 +151,18 @@ bench --site {site_name} clear-cache
 
 ### STEP 7: Test Status Prerequisites
 
-1. **Try to transition directly from Draft to Arrived**
-   - Click status field, select "Arrived"
-   - Try to save
-   - **Expected**: Either succeeds (no prerequisite) or shows message
+1. **Verify direct status editing is blocked**
+   - The status field must remain read-only
+   - Only permitted workflow actions should be available
+   - **Expected**: Draft cannot jump directly to Arrived
 
-2. **Try to transition to "Under Customs Clearance" without Customs Declaration**
-   - Change status to "Arrived" first
-   - Then try "Under Customs Clearance"
-   - **Expected**: Message about Customs Declaration prerequisite
+2. **Verify departure prerequisite**
+   - At Booked, clear Actual Departure Date
+   - Try **"Confirm Departure"**
+   - **Expected**: Transition is rejected until Actual Departure Date is set
+
+3. **Customs boundary for Phase 1**
+   - The app must not allow **"Start Customs"** until Milestone 2 installs Customs Declaration
 
 ✅ **Prerequisites enforced correctly**
 
@@ -197,9 +205,9 @@ bench --site {site_name} clear-cache
 
 1. Go to **C4agent workspace** (click in sidebar)
 2. Verify sections:
-   - **Operations**: Import Shipment, Container, Customs Declaration
-   - **Finance**: Import Expense, Sinosure Coverage
-   - **Masters**: Shipping Line, Import Expense Type, Settings
+   - **Operations**: Import Shipment and Import Container
+   - **Finance**: Future links are not listed until their milestones are installed
+   - **Masters**: Shipping Line and Settings
    - **ERPNext Integration**: PO, PI, PR, LCV
    - **Reports**: Import Pipeline
 
@@ -213,8 +221,8 @@ bench --site {site_name} clear-cache
 |------|----------|--------|
 | Create PO | Submits successfully | ✅ |
 | Create Shipment from PO button | Auto-populates fields | ✅ |
-| Status transitions | Draft → Ordered → Booked | ✅ |
-| Create Containers | Multiple containers, auto-counts | ✅ |
+| Workflow transitions | Confirm Order → Confirm Booking → Confirm Departure | ✅ |
+| Create Containers | Unique containers, immediate auto-counts | ✅ |
 | Auto-calculations | Totals correct | ✅ |
 | Supplier/Company validation | Rejects mismatches | ✅ |
 | ETA/ETD validation | Rejects invalid dates | ✅ |

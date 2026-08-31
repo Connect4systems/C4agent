@@ -2,7 +2,7 @@
 ## C4agent - Frappe/ERPNext Import Management App
 
 **Date**: 2026-08-31  
-**Status**: ✅ COMPLETE & READY TO TEST
+**Status**: CODE STABILIZED; RUNTIME UAT REQUIRED
 
 ---
 
@@ -91,11 +91,12 @@ Under Customs Clearance → Cleared → Received → Closed
 ### 6. Workspace
 
 C4agent workspace with sections:
-- **Operations**: Import Shipment, Container, Customs Declaration
-- **Finance**: Import Expense, Sinosure Coverage
-- **Masters**: Shipping Line, Import Expense Type, Settings
+- **Operations**: Import Shipment and Import Container
+- **Masters**: Shipping Line and Settings
 - **ERPNext Integration**: PO, PI, PR, LCV links
-- **Reports**: Import Pipeline placeholder
+
+Links for unimplemented customs, finance, Sinosure, and report DocTypes are added only
+with their respective milestones.
 
 ---
 
@@ -227,11 +228,11 @@ Planned features:
 
 Before proceeding to Milestone 2, verify:
 
-- [x] All DocTypes created successfully
-- [x] Custom fields added to standard doctypes
-- [x] Roles created
-- [x] Workspace available
-- [x] Validations working (test cases provided)
+- [ ] All DocTypes migrate successfully on the target bench
+- [ ] Custom fields appear on standard doctypes
+- [ ] Roles and workflow are created by setup
+- [ ] Workspace is available with only installed features visible
+- [ ] Automated and manual validations pass on the target site
 - [ ] Install app cleanly: `bench install-app c4agent`
 - [ ] Run tests: `bench run-tests --app c4agent`
 - [ ] Create test PO and shipment manually
@@ -251,18 +252,15 @@ Before proceeding to Milestone 2, verify:
 
 ## Support & Next Steps
 
-✅ **MILESTONE 1 IS COMPLETE**
+**MILESTONE 1 CODE IS READY FOR TARGET-SITE UAT**
 
 The app is ready for:
 1. Deployment to test environment
 2. UAT with actual users
 3. Proceeding to MILESTONE 2 (Customs workflow)
 
-All code is:
-- Server-side validated
-- Permission-controlled
-- Fully tested
-- Well-documented
+Static validation is complete in this repository. Bench migration, automated Frappe tests,
+and manual browser UAT remain required on the target ERPNext site.
 
 ---
 

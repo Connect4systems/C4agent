@@ -3,8 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import get_link_to_form, cstr, now_datetime
-from datetime import timedelta
+from frappe.utils import now_datetime
 
 
 class ImportShipment(Document):
@@ -78,14 +77,14 @@ class ImportShipment(Document):
 		
 		# Define allowed transitions
 		allowed_transitions = {
-			"Draft": ["Ordered"],
-			"Ordered": ["Booked", "Draft"],
-			"Booked": ["In Transit"],
-			"In Transit": ["Arrived"],
-			"Arrived": ["Under Customs Clearance"],
-			"Under Customs Clearance": ["Cleared"],
-			"Cleared": ["Received"],
-			"Received": ["Closed"],
+			"Draft": ["Ordered", "Cancelled"],
+			"Ordered": ["Booked", "Cancelled"],
+			"Booked": ["In Transit", "Cancelled"],
+			"In Transit": ["Arrived", "Cancelled"],
+			"Arrived": ["Under Customs Clearance", "Cancelled"],
+			"Under Customs Clearance": ["Cleared", "Cancelled"],
+			"Cleared": ["Received", "Cancelled"],
+			"Received": ["Closed", "Cancelled"],
 		}
 		
 		if old_status == new_status:
@@ -97,6 +96,10 @@ class ImportShipment(Document):
 		if new_status not in allowed_transitions.get(old_status, []):
 			frappe.throw(f"Cannot transition from {old_status} to {new_status}")
 		
+		if new_status == "Cancelled":
+			self.validate_cancellation()
+			return
+
 		# Validate prerequisites for status transitions
 		self.validate_status_prerequisites(new_status)
 	
@@ -108,37 +111,42 @@ class ImportShipment(Document):
 		
 		elif new_status == "Booked":
 			if not self.shipping_line:
-				frappe.msgprint("Shipping line should be set before Booked status", alert=True)
+				frappe.throw("Shipping Line is required before confirming a booking")
+			if not self.etd and not self.actual_departure_date:
+				frappe.throw("ETD or Actual Departure Date is required before confirming a booking")
 		
 		elif new_status == "In Transit":
-			if not self.etd and not self.actual_departure_date:
-				settings = frappe.get_single("C4agent Settings")
-				if settings.require_acid_before_departure:
-					frappe.msgprint("ETD or actual departure date should be set", alert=True)
+			if not self.actual_departure_date:
+				frappe.throw("Actual Departure Date is required before confirming departure")
+			settings = frappe.get_single("C4agent Settings")
+			if settings.require_acid_before_departure and not self.acid_number:
+				frappe.throw("ACID Number is required before confirming departure")
 		
 		elif new_status == "Arrived":
 			if not self.actual_arrival_date:
-				frappe.msgprint("Actual arrival date should be set", alert=True)
+				frappe.throw("Actual Arrival Date is required before confirming arrival")
 		
 		elif new_status == "Under Customs Clearance":
-			if frappe.db.exists("DocType", "Customs Declaration"):
-				customs = frappe.db.get_value(
-					"Customs Declaration",
-					{"import_shipment": self.name},
-					"name"
-				)
-				if not customs:
-					frappe.msgprint("At least one Customs Declaration should exist", alert=True)
+			if not frappe.db.exists("DocType", "Customs Declaration"):
+				frappe.throw("Customs Declaration must be installed before starting customs clearance")
+			customs = frappe.db.get_value(
+				"Customs Declaration",
+				{"import_shipment": self.name},
+				"name"
+			)
+			if not customs:
+				frappe.throw("At least one Customs Declaration is required")
 		
 		elif new_status == "Cleared":
-			if frappe.db.exists("DocType", "Customs Declaration"):
-				customs = frappe.db.get_value(
-					"Customs Declaration",
-					{"import_shipment": self.name, "clearance_status": "Released"},
-					"name"
-				)
-				if not customs:
-					frappe.msgprint("At least one Customs Declaration must be Released", alert=True)
+			if not frappe.db.exists("DocType", "Customs Declaration"):
+				frappe.throw("Customs Declaration must be installed before confirming clearance")
+			customs = frappe.db.get_value(
+				"Customs Declaration",
+				{"import_shipment": self.name, "clearance_status": "Released"},
+				"name"
+			)
+			if not customs:
+				frappe.throw("At least one Customs Declaration must be Released")
 		
 		elif new_status == "Received":
 			pr = frappe.db.get_value(
@@ -147,7 +155,38 @@ class ImportShipment(Document):
 				"name"
 			)
 			if not pr:
-				frappe.msgprint("At least one submitted Purchase Receipt should exist", alert=True)
+				frappe.throw("At least one submitted Purchase Receipt is required")
+
+		elif new_status == "Closed":
+			self.validate_basic_closure()
+			self.closed_on = now_datetime()
+			self.closed_by = frappe.session.user
+
+	def validate_cancellation(self):
+		"""Block operational cancellation while submitted ERPNext documents remain linked."""
+		linked_documents = (
+			("Purchase Invoice", "custom_import_shipment"),
+			("Purchase Receipt", "custom_import_shipment"),
+			("Landed Cost Voucher", "custom_import_shipment"),
+		)
+		for doctype, fieldname in linked_documents:
+			if frappe.db.exists(doctype, {fieldname: self.name, "docstatus": 1}):
+				frappe.throw(f"Cancel submitted {doctype} documents linked to this shipment first")
+
+	def validate_basic_closure(self):
+		"""Apply the Phase 0 closure gate; financial closure is strengthened in Milestone 4."""
+		if not frappe.db.exists(
+			"Purchase Receipt",
+			{"custom_import_shipment": self.name, "docstatus": 1},
+		):
+			frappe.throw("At least one submitted Purchase Receipt is required before closing")
+
+		settings = frappe.get_single("C4agent Settings")
+		if settings.require_landed_cost_before_closing and not frappe.db.exists(
+			"Landed Cost Voucher",
+			{"custom_import_shipment": self.name, "docstatus": 1},
+		):
+			frappe.throw("A submitted Landed Cost Voucher is required before closing")
 	
 	def refresh_summary_totals(self):
 		"""Calculate summary totals from linked records"""

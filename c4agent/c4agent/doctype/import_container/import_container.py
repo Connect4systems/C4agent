@@ -12,13 +12,24 @@ class ImportContainer(Document):
 		"""Validate container data"""
 		self.normalize_container_number()
 		self.validate_container_belongs_to_shipment()
-		self.check_duplicate_container_number()
+		self.validate_unique_container_number()
 		self.calculate_free_time_end_date()
+
+	def on_update(self):
+		"""Keep both the current and previous shipment summaries synchronized."""
+		previous = self.get_doc_before_save()
+		if previous and previous.import_shipment != self.import_shipment:
+			update_shipment_container_summary(previous.import_shipment)
+		update_shipment_container_summary(self.import_shipment)
+
+	def on_trash(self):
+		"""Remove this container from its shipment summary before deletion."""
+		update_shipment_container_summary(self.import_shipment, exclude_container=self.name)
 	
 	def normalize_container_number(self):
 		"""Normalize container number: uppercase, remove spaces"""
 		if self.container_number:
-			self.container_number = self.container_number.upper().strip()
+			self.container_number = "".join(self.container_number.upper().split())
 	
 	def validate_container_belongs_to_shipment(self):
 		"""Validate selected container belongs to the shipment"""
@@ -29,18 +40,16 @@ class ImportContainer(Document):
 					f"Import Shipment {self.import_shipment} does not exist"
 				))
 	
-	def check_duplicate_container_number(self):
-		"""Warn if container number already exists"""
+	def validate_unique_container_number(self):
+		"""Reject duplicate physical container numbers with a useful error."""
 		existing = frappe.db.get_value(
 			"Import Container",
 			{"container_number": self.container_number, "name": ("!=", self.name)},
 			"name"
 		)
 		if existing:
-			frappe.msgprint(
-				f"Warning: Container number {self.container_number} already exists as {existing}",
-				alert=True,
-				indicator="orange"
+			frappe.throw(
+				f"Container number {self.container_number} already exists as {existing}"
 			)
 	
 	def calculate_free_time_end_date(self):
@@ -80,3 +89,30 @@ class ImportContainer(Document):
 				total += expense.base_amount or 0
 			
 			self.total_container_cost = total
+
+
+def update_shipment_container_summary(shipment_name, exclude_container=None):
+	"""Update stored shipment container totals without recursively saving the shipment."""
+	if not shipment_name or not frappe.db.exists("Import Shipment", shipment_name):
+		return
+
+	filters = {"import_shipment": shipment_name}
+	if exclude_container:
+		filters["name"] = ("!=", exclude_container)
+
+	containers = frappe.get_all(
+		"Import Container",
+		filters=filters,
+		fields=["packages", "gross_weight", "cbm"],
+	)
+	frappe.db.set_value(
+		"Import Shipment",
+		shipment_name,
+		{
+			"container_count": len(containers),
+			"total_packages": sum(row.packages or 0 for row in containers),
+			"total_gross_weight": sum(row.gross_weight or 0 for row in containers),
+			"total_cbm": sum(row.cbm or 0 for row in containers),
+		},
+		update_modified=False,
+	)

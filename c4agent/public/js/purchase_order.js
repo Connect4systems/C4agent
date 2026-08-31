@@ -6,21 +6,9 @@ frappe.ui.form.on("Purchase Order", {
 		// Add "Create Import Shipment" button if PO is submitted
 		if (frm.doc.docstatus === 1) {
 			frm.add_custom_button(__("Import Shipment"), function() {
-				frappe.call({
-					method: "c4agent.c4agent.services.shipment.create_import_shipment_from_po",
-					args: {
-						po_name: frm.doc.name
-					},
-					callback: function(r) {
-						if (r.message) {
-							frappe.show_alert({
-								message: __("Import Shipment created: {0}", [r.message]),
-								indicator: "green"
-							});
-							// Optionally open the new shipment
-							frappe.set_route("Form", "Import Shipment", r.message);
-						}
-					}
+				frappe.model.open_mapped_doc({
+					method: "c4agent.c4agent.services.shipment.make_import_shipment",
+					frm: frm
 				});
 			}, __("Create"));
 		}

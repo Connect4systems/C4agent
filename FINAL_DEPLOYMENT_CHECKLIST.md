@@ -89,8 +89,8 @@ Check that these are filled:
    - Port of Loading: "Shanghai"
    - Port of Discharge: "Alexandria"
 2. **Save** (status = Draft)
-3. Click status, change to **"Ordered"**
-4. **Save**
+3. Use workflow action **"Confirm Order"**
+4. Confirm status changes to **"Ordered"**
 5. ✅ Status updated successfully
 
 ### Test 4: Create Container

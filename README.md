@@ -87,6 +87,9 @@ ERPNext GL & Stock Ledger (Posted Truth)
 - **Finance User**: Create import expenses
 - **Finance Manager**: Approve expenses, override rules, manage closure
 
+`Import User` is the base operational edit role. Assign it together with specialized
+manager, customs, or finance roles to users who must edit active shipment records.
+
 ### Key Business Rules
 
 1. One PO can create multiple Import Shipments (not 1:1)
@@ -155,15 +158,9 @@ Access the C4agent workspace from the desk to see:
 **Operations**
 - Import Shipment
 - Import Container  
-- Customs Declaration
-
-**Finance**
-- Import Expense
-- Sinosure Coverage
 
 **Masters**
 - Shipping Line
-- Import Expense Type
 - C4agent Settings
 
 **ERPNext Integration**
@@ -173,7 +170,7 @@ Access the C4agent workspace from the desk to see:
 - Landed Cost Voucher
 
 **Reports**
-- Import Pipeline
+- Added with their implementation milestones
 
 ### Development
 

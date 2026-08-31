@@ -234,10 +234,9 @@ Tests cover:
 
 ### Change Shipment Status
 1. Open Import Shipment
-2. Click status field
-3. Select new status
-4. Validations will check prerequisites
-5. Save
+2. Use the available workflow action (for example **Confirm Order**)
+3. Complete any required dates or references shown by validation
+4. Confirm that the read-only status changes to the next allowed state
 
 ### Generate Landed Cost
 - Will be available in Milestone 4

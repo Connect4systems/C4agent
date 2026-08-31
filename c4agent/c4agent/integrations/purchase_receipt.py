@@ -8,7 +8,7 @@ def validate_import_shipment(doc, method=None):
 	"""
 	Validate Purchase Receipt has matching company and supplier with Import Shipment
 	"""
-	if not doc.custom_import_shipment:
+	if not getattr(doc, "custom_import_shipment", None):
 		return
 	
 	shipment = frappe.get_doc("Import Shipment", doc.custom_import_shipment)
@@ -29,30 +29,83 @@ def validate_import_shipment(doc, method=None):
 	
 	# Validate container references
 	settings = frappe.get_single("C4agent Settings")
-	if settings.require_container_on_purchase_receipt_item:
-		for item in doc.items:
-			if doc.custom_import_shipment and not item.custom_import_container:
-				frappe.msgprint(
-					f"Row {item.idx}: Container should be specified for Purchase Receipt Item",
-					alert=True
-				)
+	for item in doc.items:
+		container_name = getattr(item, "custom_import_container", None)
+		if settings.require_container_on_purchase_receipt_item and not container_name:
+			frappe.throw(f"Row {item.idx}: Import Container is required")
+		if not container_name:
+			continue
+
+		container_shipment = frappe.db.get_value(
+			"Import Container", container_name, "import_shipment"
+		)
+		if not container_shipment:
+			frappe.throw(f"Row {item.idx}: Import Container {container_name} does not exist")
+		if container_shipment != doc.custom_import_shipment:
+			frappe.throw(
+				f"Row {item.idx}: Import Container {container_name} belongs to "
+				f"shipment {container_shipment}, not {doc.custom_import_shipment}"
+			)
 
 
 def on_submit(doc, method=None):
 	"""Update Import Shipment when Purchase Receipt is submitted"""
-	if not doc.custom_import_shipment:
+	if not getattr(doc, "custom_import_shipment", None):
 		return
-	
-	shipment = frappe.get_doc("Import Shipment", doc.custom_import_shipment)
-	shipment.refresh_summary_totals()
-	shipment.save()
+
+	refresh_shipment_receipt_summary(doc.custom_import_shipment)
 
 
 def on_cancel(doc, method=None):
 	"""Update Import Shipment when Purchase Receipt is cancelled"""
-	if not doc.custom_import_shipment:
+	if not getattr(doc, "custom_import_shipment", None):
 		return
-	
-	shipment = frappe.get_doc("Import Shipment", doc.custom_import_shipment)
-	shipment.refresh_summary_totals()
-	shipment.save()
+
+	refresh_shipment_receipt_summary(
+		doc.custom_import_shipment,
+		exclude_receipt=doc.name,
+	)
+
+
+def refresh_shipment_receipt_summary(shipment_name, exclude_receipt=None):
+	"""Refresh received quantities and value from submitted Purchase Receipts."""
+	filters = {"custom_import_shipment": shipment_name, "docstatus": 1}
+	if exclude_receipt:
+		filters["name"] = ("!=", exclude_receipt)
+
+	receipts = frappe.get_all("Purchase Receipt", filters=filters, fields=["name", "base_total"])
+	receipt_names = [row.name for row in receipts]
+	quantities_by_po_item = {}
+	if receipt_names:
+		items = frappe.get_all(
+			"Purchase Receipt Item",
+			filters={"parent": ("in", receipt_names)},
+			fields=["purchase_order_item", "qty"],
+		)
+		for item in items:
+			if item.purchase_order_item:
+				quantities_by_po_item[item.purchase_order_item] = (
+					quantities_by_po_item.get(item.purchase_order_item, 0) + (item.qty or 0)
+				)
+
+	shipment_items = frappe.get_all(
+		"Import Shipment Item",
+		filters={"parent": shipment_name},
+		fields=["name", "purchase_order_item"],
+	)
+	for item in shipment_items:
+		frappe.db.set_value(
+			"Import Shipment Item",
+			item.name,
+			"received_qty",
+			quantities_by_po_item.get(item.purchase_order_item, 0),
+			update_modified=False,
+		)
+
+	frappe.db.set_value(
+		"Import Shipment",
+		shipment_name,
+		"purchase_receipt_value",
+		sum(row.base_total or 0 for row in receipts),
+		update_modified=False,
+	)

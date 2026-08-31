@@ -8,7 +8,7 @@ def validate_import_shipment(doc, method=None):
 	"""
 	Validate Landed Cost Voucher has matching Import Shipment
 	"""
-	if not doc.custom_import_shipment:
+	if not getattr(doc, "custom_import_shipment", None):
 		return
 	
 	if not frappe.db.exists("Import Shipment", doc.custom_import_shipment):
@@ -19,7 +19,9 @@ def on_submit(doc, method=None):
 	"""
 	Mark Import Expenses as allocated when LCV is submitted
 	"""
-	if not doc.custom_import_shipment:
+	if not getattr(doc, "custom_import_shipment", None):
+		return
+	if not frappe.db.exists("DocType", "Import Expense"):
 		return
 	
 	# Get all Import Expenses linked to this shipment and included in LCV
@@ -49,7 +51,9 @@ def on_cancel(doc, method=None):
 	"""
 	Reset Import Expense allocation when LCV is cancelled
 	"""
-	if not doc.custom_import_shipment:
+	if not getattr(doc, "custom_import_shipment", None):
+		return
+	if not frappe.db.exists("DocType", "Import Expense"):
 		return
 	
 	# Find all expenses allocated to this LCV and reset them

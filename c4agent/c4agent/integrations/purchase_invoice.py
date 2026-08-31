@@ -8,7 +8,7 @@ def validate_import_shipment(doc, method=None):
 	"""
 	Validate Purchase Invoice has matching company and supplier with Import Shipment
 	"""
-	if not doc.custom_import_shipment:
+	if not getattr(doc, "custom_import_shipment", None):
 		return
 	
 	shipment = frappe.get_doc("Import Shipment", doc.custom_import_shipment)
