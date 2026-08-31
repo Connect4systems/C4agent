@@ -62,3 +62,8 @@ class TestC4agentReleaseContracts(FrappeTestCase):
 		self.assertIsInstance(blocks, list)
 		self.assertTrue(blocks)
 		self.assertEqual(len([block for block in blocks if block.get("type") == "card"]), 5)
+		for link in workspace.links:
+			if link.type != "Link":
+				continue
+			self.assertTrue(link.link_type, f"Link Type is missing for {link.label}")
+			self.assertTrue(link.link_to, f"Link To is missing for {link.label}")

@@ -89,6 +89,25 @@ C4AGENT_WORKSPACE_CONTENT = [
 	{"id": "c4agent-reports", "type": "card", "data": {"card_name": "Reports", "col": 4}},
 ]
 
+C4AGENT_WORKSPACE_LINKS = {
+	"Import Shipment": ("DocType", "Import Shipment"),
+	"Import Container": ("DocType", "Import Container"),
+	"Customs Declaration": ("DocType", "Customs Declaration"),
+	"Import Expense": ("DocType", "Import Expense"),
+	"Sinosure Coverage": ("DocType", "Sinosure Coverage"),
+	"Shipping Line": ("DocType", "Shipping Line"),
+	"Import Expense Type": ("DocType", "Import Expense Type"),
+	"C4agent Settings": ("DocType", "C4agent Settings"),
+	"Purchase Order": ("DocType", "Purchase Order"),
+	"Purchase Invoice": ("DocType", "Purchase Invoice"),
+	"Purchase Receipt": ("DocType", "Purchase Receipt"),
+	"Landed Cost Voucher": ("DocType", "Landed Cost Voucher"),
+	"Import Pipeline": ("Report", "Import Pipeline"),
+	"Shipment Cost Summary": ("Report", "Shipment Cost Summary"),
+	"Container Cost Summary": ("Report", "Container Cost Summary"),
+	"Sinosure Exposure": ("Report", "Sinosure Exposure"),
+}
+
 
 def setup_c4agent():
 	"""Install or update app-owned setup records idempotently."""
@@ -103,14 +122,22 @@ def setup_c4agent():
 
 
 def repair_c4agent_workspace():
-	"""Repair legacy installs whose empty workspace content crashes Frappe 15 Desk."""
+	"""Repair legacy installs with empty content or incomplete link metadata."""
 	if not frappe.db.exists("Workspace", "C4agent"):
 		return
-	values = {"title": "C4agent"}
-	content = frappe.db.get_value("Workspace", "C4agent", "content")
+
+	workspace = frappe.get_doc("Workspace", "C4agent")
+	workspace.title = "C4agent"
+	content = workspace.content
 	if not content or frappe.parse_json(content) == []:
-		values["content"] = frappe.as_json(C4AGENT_WORKSPACE_CONTENT)
-	frappe.db.set_value("Workspace", "C4agent", values, update_modified=False)
+		workspace.content = frappe.as_json(C4AGENT_WORKSPACE_CONTENT)
+
+	for link in workspace.links:
+		if link.type != "Link" or link.label not in C4AGENT_WORKSPACE_LINKS:
+			continue
+		link.link_type, link.link_to = C4AGENT_WORKSPACE_LINKS[link.label]
+
+	workspace.save(ignore_permissions=True)
 
 
 def create_c4agent_custom_fields():
