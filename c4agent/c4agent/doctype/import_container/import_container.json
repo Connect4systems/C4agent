@@ -1,0 +1,240 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:CNT-.YYYY.-.#####",
+ "creation": "2026-08-31 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "import_shipment",
+  "container_section",
+  "container_number",
+  "container_type",
+  "seal_number",
+  "dimensions_section",
+  "packages",
+  "gross_weight",
+  "net_weight",
+  "cbm",
+  "status_section",
+  "container_status",
+  "dates_section",
+  "arrival_date",
+  "release_date",
+  "delivery_date",
+  "empty_return_date",
+  "free_days",
+  "free_time_end_date",
+  "costs_section",
+  "freight_cost",
+  "port_cost",
+  "storage_cost",
+  "demurrage_cost",
+  "transportation_cost",
+  "other_cost",
+  "total_container_cost"
+ ],
+ "fields": [
+  {
+   "fieldname": "import_shipment",
+   "fieldtype": "Link",
+   "label": "Import Shipment",
+   "mandatory": 1,
+   "options": "Import Shipment"
+  },
+  {
+   "fieldname": "container_section",
+   "fieldtype": "Section Break",
+   "label": "Container Information"
+  },
+  {
+   "fieldname": "container_number",
+   "fieldtype": "Data",
+   "label": "Container Number",
+   "mandatory": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "container_type",
+   "fieldtype": "Select",
+   "label": "Container Type",
+   "options": "20GP\n40GP\n40HC\n45HC\nLCL\nOther"
+  },
+  {
+   "fieldname": "seal_number",
+   "fieldtype": "Data",
+   "label": "Seal Number"
+  },
+  {
+   "fieldname": "dimensions_section",
+   "fieldtype": "Section Break",
+   "label": "Dimensions & Weight"
+  },
+  {
+   "fieldname": "packages",
+   "fieldtype": "Int",
+   "label": "Packages"
+  },
+  {
+   "fieldname": "gross_weight",
+   "fieldtype": "Float",
+   "label": "Gross Weight (kg)",
+   "precision": 2
+  },
+  {
+   "fieldname": "net_weight",
+   "fieldtype": "Float",
+   "label": "Net Weight (kg)",
+   "precision": 2
+  },
+  {
+   "fieldname": "cbm",
+   "fieldtype": "Float",
+   "label": "CBM (Cubic Meters)",
+   "precision": 2
+  },
+  {
+   "fieldname": "status_section",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "fieldname": "container_status",
+   "fieldtype": "Select",
+   "label": "Container Status",
+   "options": "Expected\nLoaded\nIn Transit\nArrived\nAt Port\nCustoms\nReleased\nDelivered\nReturned\nClosed"
+  },
+  {
+   "fieldname": "dates_section",
+   "fieldtype": "Section Break",
+   "label": "Important Dates"
+  },
+  {
+   "fieldname": "arrival_date",
+   "fieldtype": "Date",
+   "label": "Arrival Date"
+  },
+  {
+   "fieldname": "release_date",
+   "fieldtype": "Date",
+   "label": "Release Date"
+  },
+  {
+   "fieldname": "delivery_date",
+   "fieldtype": "Date",
+   "label": "Delivery Date"
+  },
+  {
+   "fieldname": "empty_return_date",
+   "fieldtype": "Date",
+   "label": "Empty Return Date"
+  },
+  {
+   "fieldname": "free_days",
+   "fieldtype": "Int",
+   "label": "Free Days"
+  },
+  {
+   "fieldname": "free_time_end_date",
+   "fieldtype": "Date",
+   "label": "Free Time End Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "costs_section",
+   "fieldtype": "Section Break",
+   "label": "Costs (Read-only, from Import Expenses)"
+  },
+  {
+   "fieldname": "freight_cost",
+   "fieldtype": "Currency",
+   "label": "Freight Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "port_cost",
+   "fieldtype": "Currency",
+   "label": "Port Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "storage_cost",
+   "fieldtype": "Currency",
+   "label": "Storage Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "demurrage_cost",
+   "fieldtype": "Currency",
+   "label": "Demurrage Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "transportation_cost",
+   "fieldtype": "Currency",
+   "label": "Transportation Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "other_cost",
+   "fieldtype": "Currency",
+   "label": "Other Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_container_cost",
+   "fieldtype": "Currency",
+   "label": "Total Container Cost",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-08-31 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "C4Agent",
+ "name": "Import Container",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Import User",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Import Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

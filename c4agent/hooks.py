@@ -82,8 +82,7 @@ app_license = "mit"
 # Installation
 # ------------
 
-# before_install = "c4agent.install.before_install"
-# after_install = "c4agent.install.after_install"
+after_install = "c4agent.c4agent.setup.create_c4agent_custom_fields"
 
 # Uninstallation
 # ------------
@@ -137,13 +136,21 @@ app_license = "mit"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Purchase Invoice": {
+		"validate": "c4agent.c4agent.integrations.purchase_invoice.validate_import_shipment"
+	},
+	"Purchase Receipt": {
+		"validate": "c4agent.c4agent.integrations.purchase_receipt.validate_import_shipment",
+		"on_submit": "c4agent.c4agent.integrations.purchase_receipt.on_submit",
+		"on_cancel": "c4agent.c4agent.integrations.purchase_receipt.on_cancel",
+	},
+	"Landed Cost Voucher": {
+		"validate": "c4agent.c4agent.integrations.landed_cost_voucher.validate_import_shipment",
+		"on_submit": "c4agent.c4agent.integrations.landed_cost_voucher.on_submit",
+		"on_cancel": "c4agent.c4agent.integrations.landed_cost_voucher.on_cancel",
+	},
+}
 
 # Scheduled Tasks
 # ---------------

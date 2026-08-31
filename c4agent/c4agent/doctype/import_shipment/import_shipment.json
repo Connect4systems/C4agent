@@ -1,0 +1,402 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:IMP-.YYYY.-.#####",
+ "creation": "2026-08-31 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "shipment_title",
+  "general_section",
+  "company",
+  "supplier",
+  "purchase_order",
+  "supplier_currency",
+  "commercial_section",
+  "commercial_invoice_no",
+  "commercial_invoice_date",
+  "supplier_invoice_amount",
+  "exchange_rate",
+  "acid_section",
+  "acid_number",
+  "acid_issue_date",
+  "nafeza_reference",
+  "cargo_x_reference",
+  "shipping_section",
+  "shipping_line",
+  "bill_of_lading",
+  "bl_date",
+  "vessel",
+  "voyage",
+  "port_of_loading",
+  "port_of_discharge",
+  "final_destination",
+  "etd",
+  "eta",
+  "actual_departure_date",
+  "actual_arrival_date",
+  "customs_clearance_date",
+  "warehouse_receipt_date",
+  "items_section",
+  "items",
+  "summary_section",
+  "shipment_status",
+  "container_count",
+  "total_packages",
+  "total_gross_weight",
+  "total_cbm",
+  "po_value",
+  "supplier_invoice_value",
+  "total_import_expenses",
+  "total_landed_cost",
+  "purchase_receipt_value",
+  "closing_section",
+  "closed_on",
+  "closed_by",
+  "close_override_reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "shipment_title",
+   "fieldtype": "Data",
+   "label": "Shipment Title",
+   "read_only": 1
+  },
+  {
+   "fieldname": "general_section",
+   "fieldtype": "Section Break",
+   "label": "General Information"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "mandatory": 1,
+   "options": "Company"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "mandatory": 1,
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "Purchase Order",
+   "mandatory": 1,
+   "options": "Purchase Order",
+   "get_depends_on": "eval: doc.supplier && doc.company"
+  },
+  {
+   "fieldname": "supplier_currency",
+   "fieldtype": "Link",
+   "label": "Supplier Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "commercial_section",
+   "fieldtype": "Section Break",
+   "label": "Commercial Information"
+  },
+  {
+   "fieldname": "commercial_invoice_no",
+   "fieldtype": "Data",
+   "label": "Commercial Invoice Number"
+  },
+  {
+   "fieldname": "commercial_invoice_date",
+   "fieldtype": "Date",
+   "label": "Commercial Invoice Date"
+  },
+  {
+   "fieldname": "supplier_invoice_amount",
+   "fieldtype": "Currency",
+   "label": "Supplier Invoice Amount"
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "precision": 6
+  },
+  {
+   "fieldname": "acid_section",
+   "fieldtype": "Section Break",
+   "label": "ACID / Nafeza Information"
+  },
+  {
+   "fieldname": "acid_number",
+   "fieldtype": "Data",
+   "label": "ACID Number"
+  },
+  {
+   "fieldname": "acid_issue_date",
+   "fieldtype": "Date",
+   "label": "ACID Issue Date"
+  },
+  {
+   "fieldname": "nafeza_reference",
+   "fieldtype": "Data",
+   "label": "Nafeza Reference"
+  },
+  {
+   "fieldname": "cargo_x_reference",
+   "fieldtype": "Data",
+   "label": "CargoX Reference"
+  },
+  {
+   "fieldname": "shipping_section",
+   "fieldtype": "Section Break",
+   "label": "Shipping Information"
+  },
+  {
+   "fieldname": "shipping_line",
+   "fieldtype": "Link",
+   "label": "Shipping Line",
+   "options": "Shipping Line"
+  },
+  {
+   "fieldname": "bill_of_lading",
+   "fieldtype": "Data",
+   "label": "Bill of Lading"
+  },
+  {
+   "fieldname": "bl_date",
+   "fieldtype": "Date",
+   "label": "B/L Date"
+  },
+  {
+   "fieldname": "vessel",
+   "fieldtype": "Data",
+   "label": "Vessel"
+  },
+  {
+   "fieldname": "voyage",
+   "fieldtype": "Data",
+   "label": "Voyage"
+  },
+  {
+   "fieldname": "port_of_loading",
+   "fieldtype": "Data",
+   "label": "Port of Loading"
+  },
+  {
+   "fieldname": "port_of_discharge",
+   "fieldtype": "Data",
+   "label": "Port of Discharge"
+  },
+  {
+   "fieldname": "final_destination",
+   "fieldtype": "Data",
+   "label": "Final Destination"
+  },
+  {
+   "fieldname": "etd",
+   "fieldtype": "Date",
+   "label": "ETD (Expected Departure Date)"
+  },
+  {
+   "fieldname": "eta",
+   "fieldtype": "Date",
+   "label": "ETA (Expected Arrival Date)"
+  },
+  {
+   "fieldname": "actual_departure_date",
+   "fieldtype": "Date",
+   "label": "Actual Departure Date"
+  },
+  {
+   "fieldname": "actual_arrival_date",
+   "fieldtype": "Date",
+   "label": "Actual Arrival Date"
+  },
+  {
+   "fieldname": "customs_clearance_date",
+   "fieldtype": "Date",
+   "label": "Customs Clearance Date"
+  },
+  {
+   "fieldname": "warehouse_receipt_date",
+   "fieldtype": "Date",
+   "label": "Warehouse Receipt Date"
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Shipment Items"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Import Shipment Item"
+  },
+  {
+   "fieldname": "summary_section",
+   "fieldtype": "Section Break",
+   "label": "Summary & Status"
+  },
+  {
+   "fieldname": "shipment_status",
+   "fieldtype": "Select",
+   "label": "Shipment Status",
+   "mandatory": 1,
+   "options": "Draft\nOrdered\nBooked\nIn Transit\nArrived\nUnder Customs Clearance\nCleared\nReceived\nClosed\nCancelled",
+   "read_only": 1
+  },
+  {
+   "fieldname": "container_count",
+   "fieldtype": "Int",
+   "label": "Container Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_packages",
+   "fieldtype": "Int",
+   "label": "Total Packages",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_gross_weight",
+   "fieldtype": "Float",
+   "label": "Total Gross Weight (kg)",
+   "precision": 2,
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_cbm",
+   "fieldtype": "Float",
+   "label": "Total CBM",
+   "precision": 2,
+   "read_only": 1
+  },
+  {
+   "fieldname": "po_value",
+   "fieldtype": "Currency",
+   "label": "PO Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "supplier_invoice_value",
+   "fieldtype": "Currency",
+   "label": "Supplier Invoice Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_import_expenses",
+   "fieldtype": "Currency",
+   "label": "Total Import Expenses",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_landed_cost",
+   "fieldtype": "Currency",
+   "label": "Total Landed Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "purchase_receipt_value",
+   "fieldtype": "Currency",
+   "label": "Purchase Receipt Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "closing_section",
+   "fieldtype": "Section Break",
+   "label": "Closing Information"
+  },
+  {
+   "fieldname": "closed_on",
+   "fieldtype": "Datetime",
+   "label": "Closed On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "closed_by",
+   "fieldtype": "Link",
+   "label": "Closed By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "close_override_reason",
+   "fieldtype": "Small Text",
+   "label": "Close Override Reason"
+  }
+ ],
+ "links": [
+  {
+   "link_doctype": "Import Container",
+   "link_field": "import_shipment"
+  },
+  {
+   "link_doctype": "Customs Declaration",
+   "link_field": "import_shipment"
+  },
+  {
+   "link_doctype": "Import Expense",
+   "link_field": "import_shipment"
+  },
+  {
+   "link_doctype": "Sinosure Coverage",
+   "link_field": "import_shipment"
+  }
+ ],
+ "modified": "2026-08-31 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "C4Agent",
+ "name": "Import Shipment",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Import User",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Import Manager",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 0,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -1,0 +1,118 @@
+{
+ "actions": [],
+ "creation": "2026-08-31 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Settings",
+ "engine": "InnoDB",
+ "field_order": [
+  "general_section",
+  "default_goods_in_transit_warehouse",
+  "default_import_expense_cost_center",
+  "default_import_expense_project",
+  "validation_section",
+  "require_acid_before_departure",
+  "require_container_number",
+  "require_customs_release_before_receipt",
+  "require_landed_cost_before_closing",
+  "allow_partial_shipment_closure",
+  "require_container_on_purchase_receipt_item"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_section",
+   "fieldtype": "Section Break",
+   "label": "General Settings"
+  },
+  {
+   "fieldname": "default_goods_in_transit_warehouse",
+   "fieldtype": "Link",
+   "label": "Default Goods In Transit Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "default_import_expense_cost_center",
+   "fieldtype": "Link",
+   "label": "Default Import Expense Cost Center",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "default_import_expense_project",
+   "fieldtype": "Link",
+   "label": "Default Import Expense Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "validation_section",
+   "fieldtype": "Section Break",
+   "label": "Validation Rules"
+  },
+  {
+   "fieldname": "require_acid_before_departure",
+   "fieldtype": "Check",
+   "label": "Require ACID Before Departure"
+  },
+  {
+   "fieldname": "require_container_number",
+   "fieldtype": "Check",
+   "label": "Require Container Number",
+   "default": 1
+  },
+  {
+   "fieldname": "require_customs_release_before_receipt",
+   "fieldtype": "Check",
+   "label": "Require Customs Release Before Receipt"
+  },
+  {
+   "fieldname": "require_landed_cost_before_closing",
+   "fieldtype": "Check",
+   "label": "Require Landed Cost Before Closing",
+   "default": 1
+  },
+  {
+   "fieldname": "allow_partial_shipment_closure",
+   "fieldtype": "Check",
+   "label": "Allow Partial Shipment Closure"
+  },
+  {
+   "fieldname": "require_container_on_purchase_receipt_item",
+   "fieldtype": "Check",
+   "label": "Require Container on Purchase Receipt Item"
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-08-31 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "C4Agent",
+ "name": "C4agent Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "System Manager",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "Import Manager",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

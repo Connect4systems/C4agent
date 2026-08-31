@@ -1,0 +1,195 @@
+{
+ "creation": "2026-08-31 00:00:00.000000",
+ "custom": 1,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "idx": 0,
+ "label": "C4agent",
+ "links": [
+  {
+   "hidden": 0,
+   "label": "Operations",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "app": "c4agent",
+   "count": 0,
+   "doctype": "Import Shipment",
+   "hidden": 0,
+   "label": "Import Shipment",
+   "link_count": 0,
+   "onboard": 1,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "app": "c4agent",
+   "count": 0,
+   "doctype": "Import Container",
+   "hidden": 0,
+   "label": "Import Container",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "app": "c4agent",
+   "count": 0,
+   "doctype": "Customs Declaration",
+   "hidden": 0,
+   "label": "Customs Declaration",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "hidden": 0,
+   "label": "Finance",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "app": "c4agent",
+   "count": 0,
+   "doctype": "Import Expense",
+   "hidden": 0,
+   "label": "Import Expense",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "app": "c4agent",
+   "count": 0,
+   "doctype": "Sinosure Coverage",
+   "hidden": 0,
+   "label": "Sinosure Coverage",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "hidden": 0,
+   "label": "Masters",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "app": "c4agent",
+   "count": 0,
+   "doctype": "Shipping Line",
+   "hidden": 0,
+   "label": "Shipping Line",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "app": "c4agent",
+   "count": 0,
+   "doctype": "Import Expense Type",
+   "hidden": 0,
+   "label": "Import Expense Type",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "app": "c4agent",
+   "count": 0,
+   "doctype": "C4agent Settings",
+   "hidden": 0,
+   "label": "C4agent Settings",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "hidden": 0,
+   "label": "ERPNext Integration",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "app": "buying",
+   "count": 0,
+   "doctype": "Purchase Order",
+   "hidden": 0,
+   "label": "Purchase Order",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "app": "buying",
+   "count": 0,
+   "doctype": "Purchase Invoice",
+   "hidden": 0,
+   "label": "Purchase Invoice",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "app": "stock",
+   "count": 0,
+   "doctype": "Purchase Receipt",
+   "hidden": 0,
+   "label": "Purchase Receipt",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "app": "buying",
+   "count": 0,
+   "doctype": "Landed Cost Voucher",
+   "hidden": 0,
+   "label": "Landed Cost Voucher",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "hidden": 0,
+   "label": "Reports",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "app": "c4agent",
+   "doctype": null,
+   "hidden": 0,
+   "label": "Import Pipeline",
+   "link": "List/Import Shipment",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  }
+ ],
+ "modified": "2026-08-31 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "C4Agent",
+ "name": "C4agent",
+ "owner": "Administrator",
+ "public": 1,
+ "restrict_to_domain": "",
+ "sidebar_image": "",
+ "title": null,
+ "workflow_name": ""
+}
