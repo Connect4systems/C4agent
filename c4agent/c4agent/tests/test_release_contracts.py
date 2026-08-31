@@ -58,4 +58,7 @@ class TestC4agentReleaseContracts(FrappeTestCase):
 		workspace = frappe.get_doc("Workspace", "C4agent")
 		self.assertEqual(workspace.title, "C4agent")
 		self.assertTrue(workspace.content)
-		self.assertIsInstance(frappe.parse_json(workspace.content), list)
+		blocks = frappe.parse_json(workspace.content)
+		self.assertIsInstance(blocks, list)
+		self.assertTrue(blocks)
+		self.assertEqual(len([block for block in blocks if block.get("type") == "card"]), 5)

@@ -107,7 +107,8 @@ def repair_c4agent_workspace():
 	if not frappe.db.exists("Workspace", "C4agent"):
 		return
 	values = {"title": "C4agent"}
-	if not frappe.db.get_value("Workspace", "C4agent", "content"):
+	content = frappe.db.get_value("Workspace", "C4agent", "content")
+	if not content or frappe.parse_json(content) == []:
 		values["content"] = frappe.as_json(C4AGENT_WORKSPACE_CONTENT)
 	frappe.db.set_value("Workspace", "C4agent", values, update_modified=False)
 
