@@ -6,6 +6,7 @@
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
+ "is_submittable": 1,
  "field_order": [
   "shipment_title",
   "general_section",
@@ -376,7 +377,7 @@
    "report": 1,
    "role": "Import Manager",
    "share": 1,
-   "submit": 0,
+   "submit": 1,
    "write": 1
   },
   {
