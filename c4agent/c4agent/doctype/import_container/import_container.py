@@ -63,18 +63,20 @@ class ImportContainer(Document):
 			setattr(self, field, 0)
 		
 		# Query Import Expenses linked to this container
-		expenses = frappe.get_all(
-			"Import Expense",
-			filters={
-				"import_container": self.name,
-				"docstatus": 1
-			},
-			fields=["expense_type", "base_amount"]
-		)
-		
-		# Aggregate by type (simplified - would need actual expense type linking)
-		total = 0
-		for expense in expenses:
-			total += expense.base_amount or 0
-		
-		self.total_container_cost = total
+		self.total_container_cost = 0
+		if frappe.db.exists("DocType", "Import Expense"):
+			expenses = frappe.get_all(
+				"Import Expense",
+				filters={
+					"import_container": self.name,
+					"docstatus": 1
+				},
+				fields=["expense_type", "base_amount"]
+			)
+			
+			# Aggregate by type (simplified - would need actual expense type linking)
+			total = 0
+			for expense in expenses:
+				total += expense.base_amount or 0
+			
+			self.total_container_cost = total

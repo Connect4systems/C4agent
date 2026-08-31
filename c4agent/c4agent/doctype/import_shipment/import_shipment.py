@@ -121,22 +121,24 @@ class ImportShipment(Document):
 				frappe.msgprint("Actual arrival date should be set", alert=True)
 		
 		elif new_status == "Under Customs Clearance":
-			customs = frappe.db.get_value(
-				"Customs Declaration",
-				{"import_shipment": self.name},
-				"name"
-			)
-			if not customs:
-				frappe.msgprint("At least one Customs Declaration should exist", alert=True)
+			if frappe.db.exists("DocType", "Customs Declaration"):
+				customs = frappe.db.get_value(
+					"Customs Declaration",
+					{"import_shipment": self.name},
+					"name"
+				)
+				if not customs:
+					frappe.msgprint("At least one Customs Declaration should exist", alert=True)
 		
 		elif new_status == "Cleared":
-			customs = frappe.db.get_value(
-				"Customs Declaration",
-				{"import_shipment": self.name, "clearance_status": "Released"},
-				"name"
-			)
-			if not customs:
-				frappe.msgprint("At least one Customs Declaration must be Released", alert=True)
+			if frappe.db.exists("DocType", "Customs Declaration"):
+				customs = frappe.db.get_value(
+					"Customs Declaration",
+					{"import_shipment": self.name, "clearance_status": "Released"},
+					"name"
+				)
+				if not customs:
+					frappe.msgprint("At least one Customs Declaration must be Released", alert=True)
 		
 		elif new_status == "Received":
 			pr = frappe.db.get_value(
@@ -163,12 +165,14 @@ class ImportShipment(Document):
 			self.total_cbm = containers[0].cbm or 0
 		
 		# Total import expenses (company currency)
-		expenses = frappe.get_all(
-			"Import Expense",
-			filters={"import_shipment": self.name, "docstatus": 1},
-			fields=["SUM(base_amount) as total"]
-		)
-		self.total_import_expenses = expenses[0].total if expenses else 0
+		self.total_import_expenses = 0
+		if frappe.db.exists("DocType", "Import Expense"):
+			expenses = frappe.get_all(
+				"Import Expense",
+				filters={"import_shipment": self.name, "docstatus": 1},
+				fields=["SUM(base_amount) as total"]
+			)
+			self.total_import_expenses = expenses[0].total if expenses else 0
 		
 		# Fetch PO value
 		if self.purchase_order:
