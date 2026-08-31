@@ -24,7 +24,7 @@
    "fieldname": "shipping_line_name",
    "fieldtype": "Data",
    "label": "Shipping Line Name",
-   "mandatory": 1,
+   "reqd": 1,
    "unique": 1
   },
   {

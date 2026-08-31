@@ -60,3 +60,36 @@ def create_import_shipment_from_po(po_name):
 	Backward-compatible API returning an unsaved Import Shipment.
 	"""
 	return make_import_shipment(po_name)
+
+
+@frappe.whitelist()
+def close_import_shipment(shipment, override_reason=None):
+	doc = frappe.get_doc("Import Shipment", shipment)
+	if not ({"Import Manager", "Finance Manager", "System Manager"} & set(frappe.get_roles())):
+		frappe.throw("Only an Import Manager or Finance Manager can close a shipment", frappe.PermissionError)
+	if doc.shipment_status != "Received":
+		frappe.throw("Only a Received shipment can be closed")
+	if override_reason is not None:
+		doc.close_override_reason = override_reason
+	doc.shipment_status = "Closed"
+	doc.save()
+	if override_reason:
+		doc.add_comment("Comment", f"Shipment closed with override: {override_reason}")
+	return doc.name
+
+
+@frappe.whitelist()
+def reopen_import_shipment(shipment, reason):
+	if not reason:
+		frappe.throw("Reopen Reason is required")
+	if not ({"Import Manager", "Finance Manager", "System Manager"} & set(frappe.get_roles())):
+		frappe.throw("Only an Import Manager, Finance Manager, or System Manager can reopen a shipment", frappe.PermissionError)
+	doc = frappe.get_doc("Import Shipment", shipment)
+	if doc.shipment_status != "Closed":
+		frappe.throw("Only a Closed shipment can be reopened")
+	frappe.db.set_value("Import Shipment", doc.name, {
+		"shipment_status": "Received", "reopen_reason": reason,
+		"closed_on": None, "closed_by": None,
+	})
+	doc.add_comment("Comment", f"Shipment reopened by {frappe.session.user}: {reason}")
+	return doc.name

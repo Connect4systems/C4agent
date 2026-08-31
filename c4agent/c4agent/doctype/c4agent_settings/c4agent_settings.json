@@ -14,6 +14,9 @@
   "require_landed_cost_before_closing",
   "allow_partial_shipment_closure",
   "require_container_on_purchase_receipt_item"
+  ,"accounting_defaults_section"
+  ,"default_import_expense_cost_center"
+  ,"default_import_expense_project"
  ],
  "fields": [
   {
@@ -63,6 +66,23 @@
    "fieldname": "require_container_on_purchase_receipt_item",
    "fieldtype": "Check",
    "label": "Require Container on Purchase Receipt Item"
+  },
+  {
+   "fieldname": "accounting_defaults_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting Defaults"
+  },
+  {
+   "fieldname": "default_import_expense_cost_center",
+   "fieldtype": "Link",
+   "label": "Default Import Expense Cost Center",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "default_import_expense_project",
+   "fieldtype": "Link",
+   "label": "Default Import Expense Project",
+   "options": "Project"
   }
  ],
  "issingle": 1,

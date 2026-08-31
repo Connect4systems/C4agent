@@ -14,11 +14,16 @@
   "supplier",
   "purchase_order",
   "supplier_currency",
+  "company_currency",
   "commercial_section",
   "commercial_invoice_no",
   "commercial_invoice_date",
   "supplier_invoice_amount",
   "exchange_rate",
+  "sinosure_section",
+  "sinosure_coverage",
+  "sinosure_exposure_amount",
+  "sinosure_override_reason",
   "acid_section",
   "acid_number",
   "acid_issue_date",
@@ -39,6 +44,8 @@
   "actual_arrival_date",
   "customs_clearance_date",
   "warehouse_receipt_date",
+  "documents_section",
+  "documents",
   "items_section",
   "items",
   "summary_section",
@@ -56,6 +63,7 @@
   "closed_on",
   "closed_by",
   "close_override_reason"
+  ,"reopen_reason"
  ],
  "fields": [
   {
@@ -73,21 +81,21 @@
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
-   "mandatory": 1,
+   "reqd": 1,
    "options": "Company"
   },
   {
    "fieldname": "supplier",
    "fieldtype": "Link",
    "label": "Supplier",
-   "mandatory": 1,
+   "reqd": 1,
    "options": "Supplier"
   },
   {
    "fieldname": "purchase_order",
    "fieldtype": "Link",
    "label": "Purchase Order",
-   "mandatory": 1,
+   "reqd": 1,
    "options": "Purchase Order",
    "get_depends_on": "eval: doc.supplier && doc.company"
   },
@@ -96,6 +104,14 @@
    "fieldtype": "Link",
    "label": "Supplier Currency",
    "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "company_currency",
+   "fieldtype": "Link",
+   "label": "Company Currency",
+   "options": "Currency",
+   "fetch_from": "company.default_currency",
    "read_only": 1
   },
   {
@@ -123,6 +139,28 @@
    "fieldtype": "Float",
    "label": "Exchange Rate",
    "precision": 6
+  },
+  {
+   "fieldname": "sinosure_section",
+   "fieldtype": "Section Break",
+   "label": "Sinosure Coverage"
+  },
+  {
+   "fieldname": "sinosure_coverage",
+   "fieldtype": "Link",
+   "label": "Sinosure Coverage",
+   "options": "Sinosure Coverage"
+  },
+  {
+   "fieldname": "sinosure_exposure_amount",
+   "fieldtype": "Currency",
+   "label": "Covered Exposure Amount",
+   "options": "supplier_currency"
+  },
+  {
+   "fieldname": "sinosure_override_reason",
+   "fieldtype": "Small Text",
+   "label": "Sinosure Limit Override Reason"
   },
   {
    "fieldname": "acid_section",
@@ -226,6 +264,17 @@
    "label": "Warehouse Receipt Date"
   },
   {
+   "fieldname": "documents_section",
+   "fieldtype": "Section Break",
+   "label": "Shipment Documents"
+  },
+  {
+   "fieldname": "documents",
+   "fieldtype": "Table",
+   "label": "Documents",
+   "options": "Import Shipment Document"
+  },
+  {
    "fieldname": "items_section",
    "fieldtype": "Section Break",
    "label": "Shipment Items"
@@ -245,7 +294,7 @@
    "fieldname": "shipment_status",
    "fieldtype": "Select",
    "label": "Shipment Status",
-   "mandatory": 1,
+   "reqd": 1,
    "options": "Draft\nOrdered\nBooked\nIn Transit\nArrived\nUnder Customs Clearance\nCleared\nReceived\nClosed\nCancelled",
    "read_only": 1
   },
@@ -327,11 +376,25 @@
    "fieldname": "close_override_reason",
    "fieldtype": "Small Text",
    "label": "Close Override Reason"
+  },
+  {
+   "fieldname": "reopen_reason",
+   "fieldtype": "Small Text",
+   "label": "Last Reopen Reason",
+   "read_only": 1
   }
  ],
  "links": [
   {
    "link_doctype": "Import Container",
+   "link_field": "import_shipment"
+  },
+  {
+   "link_doctype": "Import Expense",
+   "link_field": "import_shipment"
+  },
+  {
+   "link_doctype": "Customs Declaration",
    "link_field": "import_shipment"
   }
  ],

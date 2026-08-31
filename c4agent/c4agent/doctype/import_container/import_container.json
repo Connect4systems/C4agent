@@ -40,7 +40,7 @@
    "fieldname": "import_shipment",
    "fieldtype": "Link",
    "label": "Import Shipment",
-   "mandatory": 1,
+   "reqd": 1,
    "options": "Import Shipment"
   },
   {
@@ -52,7 +52,7 @@
    "fieldname": "container_number",
    "fieldtype": "Data",
    "label": "Container Number",
-   "mandatory": 1,
+   "reqd": 1,
    "unique": 1
   },
   {
@@ -189,7 +189,12 @@
    "read_only": 1
   }
  ],
- "links": [],
+ "links": [
+  {
+   "link_doctype": "Import Expense",
+   "link_field": "import_container"
+  }
+ ],
  "modified": "2026-08-31 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "C4Agent",

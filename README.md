@@ -1,267 +1,70 @@
-## C4Agent - Import Management System for Frappe/ERPNext
+# C4agent 1.0
 
-Import and logistics management system for companies importing and distributing products (e.g., solar products). Tracks shipments, containers, customs declarations, import expenses, and integrates with ERPNext's standard accounting and stock management.
+C4agent is the import operations layer for ERPNext 15. It manages the complete purchase-to-import lifecycle while ERPNext remains the accounting, stock receipt, and valuation authority.
 
-### Features
+## Included phases
 
-#### Core Import Management (Milestone 1 ✅ COMPLETED)
-- **Import Shipment**: Central operational record linking PO to shipment lifecycle
-- **Import Container**: Track individual containers with status, dates, and costs
-- **Shipping Line Master**: Manage shipping companies and their information
-- **Shipment Workflow**: Draft → Ordered → Booked → In Transit → Arrived → Customs → Cleared → Received → Closed
-- **Custom Fields on Standard Doctypes**:
-  - Supplier: foreign supplier, shipping agent, customs broker, logistics provider flags
-  - Purchase Invoice: Import Shipment link with informational fields
-  - Purchase Receipt: Import Shipment and Container links
-  - Landed Cost Voucher: Import Shipment reference
-  - Item: Wattage for solar panels
+- Import Shipment, PO mapping, shipment items, containers, documents, lifecycle workflow, closure and controlled reopening
+- Foreign Purchase Invoice validation with ACID, shipping, PO and Sinosure references
+- Purchase Receipt shipment/container validation and received-quantity summaries
+- Customs Declaration, government costs, accounting references, and clearance workflow
+- Import Expense Types, multi-currency expenses, recoverable VAT policy, approval workflow, and container cost summaries
+- Standard ERPNext Landed Cost Voucher generation with exact expense traceability and duplicate-allocation protection
+- Sinosure policy, per-shipment exposure, fees, expiry processing, approval workflow, and supplier exposure service
+- Import Pipeline, Shipment Cost Summary, Container Cost Summary, and Sinosure Exposure reports
+- C4agent workspace, linked-document dashboard, six operational roles, audit comments, and configurable controls
 
-#### Planned Modules
+The app never writes directly to GL Entry, Stock Ledger Entry, Bin, or item valuation. Purchase Invoices, Purchase Receipts, and Landed Cost Vouchers use standard ERPNext behavior.
 
-**Milestone 2: Customs Workflow**
-- Customs Declaration with ACID/Nafeza tracking
-- Customs clearance workflow
-- Government fees and taxes tracking
+## Supported platform
 
-**Milestone 3: Expense Management**
-- Import Expense types (freight, duties, broker fees, etc.)
-- Shipment and container-level cost attribution
-- Finance approval workflow
+- Frappe 15
+- ERPNext 15
+- Python 3.10+
 
-**Milestone 4: Landed Cost Integration**
-- Automatic Landed Cost Voucher generation
-- Prevention of duplicate cost allocation
-- Proper stock valuation through ERPNext
+## Install or upgrade
 
-**Milestone 5: Sinosure Coverage**
-- Supplier credit insurance tracking
-- Exposure limit management
-- Policy and coverage monitoring
-
-**Milestone 6: Reports & Dashboard**
-- Import Pipeline report
-- Shipment Cost Summary
-- Container Cost Summary
-- Sinosure Exposure report
-
-### Installation
+From the bench directory:
 
 ```bash
-cd $PATH_TO_YOUR_BENCH
-bench get-app https://github.com/connect4systems/c4agent.git --branch main
-bench install-app c4agent
+bench --site green.connect4systems.com backup
+bench --site green.connect4systems.com migrate
+bench --site green.connect4systems.com clear-cache
+bench build --app c4agent
+sudo supervisorctl restart all
 ```
 
-### Requirements
+For a first installation, run `bench --site green.connect4systems.com install-app c4agent` before migrate.
 
-- Frappe Framework v15.0 or higher
-- ERPNext v15.0 or higher
+## Configuration
 
-### Architecture
+Open **C4agent Settings** and review:
 
-The app follows a clean separation of concerns:
+- goods-in-transit warehouse
+- ACID requirement before departure
+- customs release requirement before receipt
+- container requirements
+- landed cost requirement before closure
+- partial shipment closure
+- default import expense cost center and project
 
-```
-Import Shipment (Operational Truth)
-    ↓
-    +-- Import Container (Container tracking)
-    +-- Purchase Invoice (Accounting link)
-    +-- Purchase Receipt (Stock receipt)
-    +-- Customs Declaration (Regulatory)
-    +-- Import Expense (Cost attribution)
-    +-- Sinosure Coverage (Credit exposure)
-    ↓
-Landed Cost Voucher (Stock valuation)
-    ↓
-ERPNext GL & Stock Ledger (Posted Truth)
-```
+Assign users the base `Import User` role plus their operational role as appropriate. Finance and customs workflows use the dedicated manager roles.
 
-**Key Principle**: C4agent is an operational/logistics layer that organizes import processes. It never directly modifies ERPNext's accounting or stock ledgers. All GL and stock changes happen through standard ERPNext documents (Purchase Invoice, Purchase Receipt, Landed Cost Voucher).
-
-### Roles
-
-- **Import User**: Create/view shipments and containers
-- **Import Manager**: Operational control and status transitions
-- **Customs User**: Manage customs declarations
-- **Customs Manager**: Approve customs clearance
-- **Finance User**: Create import expenses
-- **Finance Manager**: Approve expenses, override rules, manage closure
-
-`Import User` is the base operational edit role. Assign it together with specialized
-manager, customs, or finance roles to users who must edit active shipment records.
-
-### Key Business Rules
-
-1. One PO can create multiple Import Shipments (not 1:1)
-2. One Shipment can have multiple Containers, Purchase Receipts, and Purchase Invoices
-3. Container must belong to the selected shipment
-4. Recoverable Import VAT is excluded from landed cost by default
-5. No duplicate landed-cost allocation allowed
-6. Shipment closure blocked without resolved landed-cost expenses
-7. Never directly modify GL Entry or Stock Ledger
-
-### Setup
-
-1. **Create Roles** (automatic on install)
-2. **Add Users to Roles** (via Security > User)
-3. **Configure C4agent Settings** (C4Agent > Settings)
-   - Default warehouse for goods-in-transit
-   - Validation requirements (ACID, containers, customs release, etc.)
-   - Cost center and project defaults
-
-### Usage Workflow
-
-#### Standard Import Flow
-
-1. **Create Purchase Order** in ERPNext
-   - Supplier, company, items, quantities
-
-2. **Create Import Shipment**
-   - Link to PO
-   - Set supplier currency
-   - Add shipping details (line, port, dates, ACID, etc.)
-   - Add items (auto-fetched from PO)
-
-3. **Add Containers**
-   - Container number, type, dimensions
-   - Track movement through customs
-
-4. **Create Customs Declaration**
-   - Link ACID, Nafeza, CargoX references
-   - Track duties and fees
-   - Record clearance status
-
-5. **Record Import Expenses**
-   - Ocean freight, customs broker, port charges, etc.
-   - Assign to shipment or specific containers
-   - Link to actual Purchase Invoices/Journal Entries
-
-6. **Create Purchase Receipt** (in ERPNext)
-   - Receive goods into warehouse
-   - Link to Import Shipment and Container
-   - Standard ERPNext stock receipt
-
-7. **Generate Landed Cost Voucher** (in ERPNext)
-   - Auto-generate from Import Shipment
-   - Automatically includes eligible import expenses
-   - ERPNext updates stock valuation
-
-8. **Close Import Shipment**
-   - Validates all prerequisites
-   - Records closure timestamp and user
-   - Marks shipment complete
-
-### Workspace
-
-Access the C4agent workspace from the desk to see:
-
-**Operations**
-- Import Shipment
-- Import Container  
-
-**Masters**
-- Shipping Line
-- C4agent Settings
-
-**ERPNext Integration**
-- Purchase Order
-- Purchase Invoice
-- Purchase Receipt
-- Landed Cost Voucher
-
-**Reports**
-- Added with their implementation milestones
-
-### Development
-
-#### Code Structure
-
-```
-c4agent/
-├── c4agent/
-│   ├── doctype/
-│   │   ├── import_shipment/
-│   │   ├── import_shipment_item/
-│   │   ├── import_container/
-│   │   ├── shipping_line/
-│   │   ├── c4agent_settings/
-│   │   ├── customs_declaration/         (Milestone 2)
-│   │   ├── import_expense/               (Milestone 3)
-│   │   ├── import_expense_type/          (Milestone 3)
-│   │   └── sinosure_coverage/            (Milestone 5)
-│   ├── integrations/
-│   │   ├── purchase_invoice.py
-│   │   ├── purchase_receipt.py
-│   │   └── landed_cost_voucher.py
-│   ├── services/
-│   │   ├── shipment.py
-│   │   ├── costing.py
-│   │   └── sinosure.py
-│   └── tests/
-│       └── test_milestone_1.py
-├── hooks.py
-└── setup.py
-```
-
-#### Testing
+## Test
 
 ```bash
-bench --site {site_name} run-tests --app c4agent
+bench --site green.connect4systems.com run-tests --app c4agent
 ```
 
-#### Code Style
+Follow [TESTING_GUIDE.md](TESTING_GUIDE.md) for the complete business UAT.
 
-This app uses pre-commit hooks for code quality:
+## Key design rules
 
-```bash
-cd apps/c4agent
-pre-commit install
-```
+- A Purchase Order can be fulfilled by multiple Import Shipments.
+- A shipment can have multiple containers, invoices, receipts, expenses, and LCVs.
+- Import VAT is recoverable and excluded from landed cost by default.
+- One Import Expense can belong to only one submitted LCV.
+- Weight, volume, and manual allocations are entered through a standard manual ERPNext LCV and must reference the exact Import Expense row.
+- Closing requires receipt, customs release, resolved expenses, logistics details, and landed cost unless an authorized documented override is used.
 
-Tools: ruff (linting/formatting), eslint, prettier, pyupgrade
-
-### Contributing
-
-1. Create a feature branch
-2. Implement feature with tests
-3. Ensure pre-commit passes
-4. Submit pull request to `develop` branch
-
-### Support for Custom Fields
-
-If modifying existing doctypes, ensure migrations are:
-1. Idempotent (safe to run multiple times)
-2. Don't create duplicate custom fields
-3. Use `ignore_if_duplicate=True` where appropriate
-
-### Known Limitations (Version 1.0)
-
-- No partial landed-cost allocation (single LCV per expense)
-- Container-level cost aggregation simplified (full implementation in future)
-- Sinosure is credit-tracking, not banking integration
-- No multi-currency ledger (uses ERPNext base currency for reporting)
-
-### Future Enhancements
-
-- Partial shipment closure
-- Partial landed-cost allocation
-- Container tracking API integration
-- Customs brokerage API integration
-- Advanced cost allocation by weight/quantity/manual
-- Cost-per-watt reporting for solar panels
-
-### License
-
-MIT
-
-### Support
-
-For issues, questions, or contributions:
-- Create an issue in the repository
-- Contact: info@connect4systems.com
-
----
-
-**Last Updated**: 2026-08-31
-**Version**: 0.1.0 (Milestone 1 Beta)
-
+License: MIT

@@ -1,0 +1,38 @@
+{
+ "doctype":"DocType","name":"Customs Declaration","module":"C4Agent","autoname":"format:CUS-{YYYY}-{#####}","is_submittable":0,"track_changes":1,
+ "field_order":["company","import_shipment","acid_number","clearance_status","reference_section","customs_declaration_number","declaration_date","nafeza_reference","customs_office","customs_broker","release_date","cost_section","customs_duty","import_vat","import_tax","nafeza_fees","inspection_fees","quarantine_fees","other_government_fees","total_customs_cost","accounting_section","accounting_references","notes"],
+ "fields":[
+  {"fieldname":"company","fieldtype":"Link","label":"Company","options":"Company","reqd":1,"in_list_view":1},
+  {"fieldname":"import_shipment","fieldtype":"Link","label":"Import Shipment","options":"Import Shipment","reqd":1,"in_list_view":1},
+  {"fieldname":"acid_number","fieldtype":"Data","label":"ACID Number","read_only":1},
+  {"fieldname":"clearance_status","fieldtype":"Select","label":"Clearance Status","options":"Draft\nDocuments Submitted\nUnder Review\nUnder Inspection\nDuties Assessed\nPayment Pending\nPaid\nReleased\nCancelled","default":"Draft","read_only":1,"reqd":1,"in_list_view":1},
+  {"fieldname":"reference_section","fieldtype":"Section Break","label":"Declaration References"},
+  {"fieldname":"customs_declaration_number","fieldtype":"Data","label":"Customs Declaration Number"},
+  {"fieldname":"declaration_date","fieldtype":"Date","label":"Declaration Date"},
+  {"fieldname":"nafeza_reference","fieldtype":"Data","label":"Nafeza Reference"},
+  {"fieldname":"customs_office","fieldtype":"Data","label":"Customs Office"},
+  {"fieldname":"customs_broker","fieldtype":"Link","label":"Customs Broker","options":"Supplier"},
+  {"fieldname":"release_date","fieldtype":"Date","label":"Release Date"},
+  {"fieldname":"cost_section","fieldtype":"Section Break","label":"Government Costs"},
+  {"fieldname":"customs_duty","fieldtype":"Currency","label":"Customs Duty","options":"Company:company:default_currency"},
+  {"fieldname":"import_vat","fieldtype":"Currency","label":"Import VAT (Recoverable by Default)","options":"Company:company:default_currency"},
+  {"fieldname":"import_tax","fieldtype":"Currency","label":"Import Tax","options":"Company:company:default_currency"},
+  {"fieldname":"nafeza_fees","fieldtype":"Currency","label":"Nafeza Fees","options":"Company:company:default_currency"},
+  {"fieldname":"inspection_fees","fieldtype":"Currency","label":"Inspection Fees","options":"Company:company:default_currency"},
+  {"fieldname":"quarantine_fees","fieldtype":"Currency","label":"Quarantine Fees","options":"Company:company:default_currency"},
+  {"fieldname":"other_government_fees","fieldtype":"Currency","label":"Other Government Fees","options":"Company:company:default_currency"},
+  {"fieldname":"total_customs_cost","fieldtype":"Currency","label":"Total Customs Cost (Excludes Import VAT)","options":"Company:company:default_currency","read_only":1},
+  {"fieldname":"accounting_section","fieldtype":"Section Break","label":"Accounting References"},
+  {"fieldname":"accounting_references","fieldtype":"Table","label":"Accounting References","options":"Customs Accounting Reference"},
+  {"fieldname":"notes","fieldtype":"Small Text","label":"Notes"}
+ ],
+ "permissions":[
+  {"role":"Import User","read":1,"create":1,"write":1},
+  {"role":"Import Manager","read":1,"create":1,"write":1,"delete":1,"report":1},
+  {"role":"Customs User","read":1,"create":1,"write":1,"report":1},
+  {"role":"Customs Manager","read":1,"create":1,"write":1,"delete":1,"report":1},
+  {"role":"Finance User","read":1,"write":1},
+  {"role":"Finance Manager","read":1,"write":1,"report":1},
+  {"role":"System Manager","read":1,"create":1,"write":1,"delete":1,"report":1}
+ ]
+}

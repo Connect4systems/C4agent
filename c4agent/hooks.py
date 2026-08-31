@@ -46,6 +46,7 @@ required_apps = ["erpnext"]
 doctype_js = {
 	"Purchase Order": "public/js/purchase_order.js",
 	"Purchase Receipt": "public/js/purchase_receipt.js",
+	"Purchase Invoice": "public/js/purchase_invoice.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -160,13 +161,13 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
 # 	"all": [
 # 		"c4agent.tasks.all"
 # 	],
-# 	"daily": [
-# 		"c4agent.tasks.daily"
-# 	],
+	"daily": [
+		"c4agent.c4agent.tasks.update_sinosure_expiry_status"
+	],
 # 	"hourly": [
 # 		"c4agent.tasks.hourly"
 # 	],
@@ -176,7 +177,7 @@ doc_events = {
 # 	"monthly": [
 # 		"c4agent.tasks.monthly"
 # 	],
-# }
+}
 
 # Testing
 # -------

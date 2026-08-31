@@ -1,0 +1,130 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:expense_type_name",
+ "creation": "2026-09-01 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Setup",
+ "engine": "InnoDB",
+ "field_order": [
+  "expense_type_name",
+  "disabled",
+  "accounting_section",
+  "default_expense_account",
+  "landed_cost_section",
+  "include_in_landed_cost",
+  "is_recoverable_tax",
+  "allocation_basis",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "expense_type_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Expense Type Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Disabled"
+  },
+  {
+   "fieldname": "accounting_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting Defaults"
+  },
+  {
+   "description": "Optional company account default. It can be overridden on an expense.",
+   "fieldname": "default_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Expense Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "landed_cost_section",
+   "fieldtype": "Section Break",
+   "label": "Landed Cost Policy"
+  },
+  {
+   "default": "0",
+   "fieldname": "include_in_landed_cost",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Include in Landed Cost"
+  },
+  {
+   "default": "0",
+   "description": "Recoverable taxes are excluded from landed cost unless a Finance Manager documents an override.",
+   "fieldname": "is_recoverable_tax",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Recoverable Tax"
+  },
+  {
+   "default": "Amount",
+   "fieldname": "allocation_basis",
+   "fieldtype": "Select",
+   "label": "Allocation Basis",
+   "options": "Quantity\nAmount\nWeight\nVolume\nManual",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  }
+ ],
+ "links": [],
+ "modified": "2026-09-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "C4Agent",
+ "name": "Import Expense Type",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 0,
+   "delete": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Finance User",
+   "write": 0
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Finance Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Import Manager"
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "expense_type_name",
+ "sort_order": "ASC",
+ "states": [],
+ "track_changes": 1
+}

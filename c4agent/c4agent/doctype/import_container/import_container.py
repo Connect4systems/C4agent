@@ -21,6 +21,8 @@ class ImportContainer(Document):
 		if previous and previous.import_shipment != self.import_shipment:
 			update_shipment_container_summary(previous.import_shipment)
 		update_shipment_container_summary(self.import_shipment)
+		if previous and previous.container_status != self.container_status and self.container_status in ("Arrived", "Released"):
+			frappe.get_doc("Import Shipment", self.import_shipment).add_comment("Comment", f"Container {self.container_number} marked {self.container_status}")
 
 	def on_trash(self):
 		"""Remove this container from its shipment summary before deletion."""

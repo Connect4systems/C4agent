@@ -1,0 +1,320 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:IEXP-{YYYY}-{#####}",
+ "creation": "2026-09-01 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "general_section",
+  "company",
+  "posting_date",
+  "expense_status",
+  "attribution_section",
+  "import_shipment",
+  "import_container",
+  "expense_type",
+  "party_section",
+  "supplier",
+  "supplier_invoice",
+  "currency_section",
+  "currency",
+  "amount",
+  "exchange_rate",
+  "company_currency",
+  "base_amount",
+  "accounting_section",
+  "expense_account",
+  "cost_center",
+  "project",
+  "accounting_reference_doctype",
+  "accounting_reference_name",
+  "landed_cost_section",
+  "include_in_landed_cost",
+  "allocation_basis",
+  "landed_cost_allocated",
+  "landed_cost_voucher",
+  "landed_cost_override_reason",
+  "landed_cost_exclusion_reason",
+  "details_section",
+  "remarks",
+  "attachment"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_section",
+   "fieldtype": "Section Break",
+   "label": "General Information"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "expense_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Expense Status",
+   "options": "Draft\nPending Verification\nApproved\nAllocated\nCancelled",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "attribution_section",
+   "fieldtype": "Section Break",
+   "label": "Shipment and Container Attribution"
+  },
+  {
+   "fieldname": "import_shipment",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Import Shipment",
+   "options": "Import Shipment",
+   "reqd": 1
+  },
+  {
+   "fieldname": "import_container",
+   "fieldtype": "Link",
+   "label": "Import Container",
+   "options": "Import Container"
+  },
+  {
+   "fieldname": "expense_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Expense Type",
+   "options": "Import Expense Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "party_section",
+   "fieldtype": "Section Break",
+   "label": "Supplier and Invoice"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier / Payee",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "supplier_invoice",
+   "fieldtype": "Link",
+   "label": "Supplier Invoice",
+   "options": "Purchase Invoice"
+  },
+  {
+   "fieldname": "currency_section",
+   "fieldtype": "Section Break",
+   "label": "Currency and Amount"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Transaction Currency",
+   "options": "Currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "options": "currency",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "precision": "9",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "company.default_currency",
+   "fieldname": "company_currency",
+   "fieldtype": "Link",
+   "label": "Company Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "base_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount (Company Currency)",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accounting_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting Reference"
+  },
+  {
+   "description": "Account used by the linked ERPNext accounting transaction. Import Expense does not post to this account.",
+   "fieldname": "expense_account",
+   "fieldtype": "Link",
+   "label": "Expense / Tax Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "accounting_reference_doctype",
+   "fieldtype": "Link",
+   "label": "Accounting Reference Type",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "accounting_reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Accounting Reference",
+   "options": "accounting_reference_doctype"
+  },
+  {
+   "fieldname": "landed_cost_section",
+   "fieldtype": "Section Break",
+   "label": "Landed Cost"
+  },
+  {
+   "default": "0",
+   "fieldname": "include_in_landed_cost",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Include in Landed Cost"
+  },
+  {
+   "default": "Amount",
+   "fieldname": "allocation_basis",
+   "fieldtype": "Select",
+   "label": "Allocation Basis",
+   "options": "Quantity\nAmount\nWeight\nVolume\nManual",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "landed_cost_allocated",
+   "fieldtype": "Check",
+   "label": "Landed Cost Allocated",
+   "read_only": 1
+  },
+  {
+   "fieldname": "landed_cost_voucher",
+   "fieldtype": "Link",
+   "label": "Landed Cost Voucher",
+   "options": "Landed Cost Voucher",
+   "read_only": 1
+  },
+  {
+   "description": "Required when a recoverable tax is exceptionally capitalized.",
+   "fieldname": "landed_cost_override_reason",
+   "fieldtype": "Small Text",
+   "label": "Landed Cost Override Reason"
+  },
+  {
+   "description": "Explain why an otherwise capitalizable cost is excluded.",
+   "fieldname": "landed_cost_exclusion_reason",
+   "fieldtype": "Small Text",
+   "label": "Landed Cost Exclusion Reason"
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "label": "Attachment"
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-09-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "C4Agent",
+ "name": "Import Expense",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Finance User",
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Finance Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Import Manager"
+  }
+ ],
+ "quick_entry": 0,
+ "sort_field": "posting_date",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

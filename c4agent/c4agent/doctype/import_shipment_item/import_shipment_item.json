@@ -28,7 +28,7 @@
    "fieldname": "item_code",
    "fieldtype": "Link",
    "label": "Item Code",
-   "mandatory": 1,
+   "reqd": 1,
    "options": "Item"
   },
   {

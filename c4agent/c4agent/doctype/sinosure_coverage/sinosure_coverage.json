@@ -1,0 +1,39 @@
+{
+ "doctype":"DocType","name":"Sinosure Coverage","module":"C4Agent","autoname":"format:SIN-{YYYY}-{#####}","track_changes":1,
+ "field_order":["company","supplier","import_shipment","coverage_status","policy_number","sinosure_reference","coverage_currency","approved_limit","opening_or_previous_exposure","current_shipment_exposure","remaining_limit","override_reason","dates_section","approval_date","coverage_start_date","coverage_expiry_date","payment_due_date","claim_expiry_date","fee_section","fee_currency","fee_amount","fee_exchange_rate","fee_base_amount","fee_paid","fee_payment_reference","notes"],
+ "fields":[
+  {"fieldname":"company","fieldtype":"Link","label":"Company","options":"Company","reqd":1,"in_list_view":1},
+  {"fieldname":"supplier","fieldtype":"Link","label":"Supplier","options":"Supplier","reqd":1,"in_list_view":1},
+  {"fieldname":"import_shipment","fieldtype":"Link","label":"Import Shipment","options":"Import Shipment","reqd":1,"unique":1,"in_list_view":1},
+  {"fieldname":"coverage_status","fieldtype":"Select","label":"Coverage Status","options":"Draft\nPending Approval\nApproved\nActive\nExpired\nClosed\nRejected","default":"Draft","read_only":1,"reqd":1,"in_list_view":1},
+  {"fieldname":"policy_number","fieldtype":"Data","label":"Policy Number"},
+  {"fieldname":"sinosure_reference","fieldtype":"Data","label":"Sinosure Reference"},
+  {"fieldname":"coverage_currency","fieldtype":"Link","label":"Coverage Currency","options":"Currency","default":"USD","reqd":1},
+  {"fieldname":"approved_limit","fieldtype":"Currency","label":"Approved Limit","options":"coverage_currency","reqd":1},
+  {"fieldname":"opening_or_previous_exposure","fieldtype":"Currency","label":"Opening / Previous Exposure","options":"coverage_currency"},
+  {"fieldname":"current_shipment_exposure","fieldtype":"Currency","label":"Current Shipment Exposure","options":"coverage_currency","reqd":1},
+  {"fieldname":"remaining_limit","fieldtype":"Currency","label":"Remaining Limit","options":"coverage_currency","read_only":1},
+  {"fieldname":"override_reason","fieldtype":"Small Text","label":"Limit Override Reason"},
+  {"fieldname":"dates_section","fieldtype":"Section Break","label":"Dates"},
+  {"fieldname":"approval_date","fieldtype":"Date","label":"Approval Date"},
+  {"fieldname":"coverage_start_date","fieldtype":"Date","label":"Coverage Start Date"},
+  {"fieldname":"coverage_expiry_date","fieldtype":"Date","label":"Coverage Expiry Date"},
+  {"fieldname":"payment_due_date","fieldtype":"Date","label":"Payment Due Date"},
+  {"fieldname":"claim_expiry_date","fieldtype":"Date","label":"Claim Expiry Date"},
+  {"fieldname":"fee_section","fieldtype":"Section Break","label":"Sinosure Fee"},
+  {"fieldname":"fee_currency","fieldtype":"Link","label":"Fee Currency","options":"Currency"},
+  {"fieldname":"fee_amount","fieldtype":"Currency","label":"Fee Amount","options":"fee_currency"},
+  {"fieldname":"fee_exchange_rate","fieldtype":"Float","label":"Fee Exchange Rate","precision":"9"},
+  {"fieldname":"fee_base_amount","fieldtype":"Currency","label":"Fee Amount (Company Currency)","read_only":1},
+  {"fieldname":"fee_paid","fieldtype":"Check","label":"Fee Paid"},
+  {"fieldname":"fee_payment_reference","fieldtype":"Data","label":"Fee Payment Reference"},
+  {"fieldname":"notes","fieldtype":"Small Text","label":"Notes"}
+ ],
+ "links":[{"link_doctype":"Import Shipment","link_field":"sinosure_coverage"}],
+ "permissions":[
+  {"role":"Finance User","read":1,"create":1,"write":1,"report":1},
+  {"role":"Finance Manager","read":1,"create":1,"write":1,"delete":1,"report":1},
+  {"role":"Import Manager","read":1,"report":1},
+  {"role":"System Manager","read":1,"create":1,"write":1,"delete":1,"report":1}
+ ]
+}

@@ -29,6 +29,10 @@ def validate_import_shipment(doc, method=None):
 	
 	# Validate container references
 	settings = frappe.get_single("C4agent Settings")
+	if settings.require_customs_release_before_receipt and not frappe.db.exists(
+		"Customs Declaration", {"import_shipment": doc.custom_import_shipment, "clearance_status": "Released"}
+	):
+		frappe.throw("A Released Customs Declaration is required before receiving this shipment")
 	for item in doc.items:
 		container_name = getattr(item, "custom_import_container", None)
 		if settings.require_container_on_purchase_receipt_item and not container_name:
@@ -54,6 +58,7 @@ def on_submit(doc, method=None):
 		return
 
 	refresh_shipment_receipt_summary(doc.custom_import_shipment)
+	frappe.get_doc("Import Shipment", doc.custom_import_shipment).add_comment("Comment", f"Purchase Receipt {doc.name} submitted")
 
 
 def on_cancel(doc, method=None):

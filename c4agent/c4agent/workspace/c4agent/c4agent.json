@@ -37,6 +37,45 @@
    "workflow_state": null
   },
   {
+   "app": "c4agent",
+   "count": 0,
+   "doctype": "Customs Declaration",
+   "hidden": 0,
+   "label": "Customs Declaration",
+   "link_count": 0,
+   "onboard": 1,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "hidden": 0,
+   "label": "Finance",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "app": "c4agent",
+   "count": 0,
+   "doctype": "Import Expense",
+   "hidden": 0,
+   "label": "Import Expense",
+   "link_count": 0,
+   "onboard": 1,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "app": "c4agent",
+   "count": 0,
+   "doctype": "Sinosure Coverage",
+   "hidden": 0,
+   "label": "Sinosure Coverage",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
    "hidden": 0,
    "label": "Masters",
    "onboard": 0,
@@ -48,6 +87,17 @@
    "doctype": "Shipping Line",
    "hidden": 0,
    "label": "Shipping Line",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Link",
+   "workflow_state": null
+  },
+  {
+   "app": "c4agent",
+   "count": 0,
+   "doctype": "Import Expense Type",
+   "hidden": 0,
+   "label": "Import Expense Type",
    "link_count": 0,
    "onboard": 0,
    "type": "Link",
@@ -113,6 +163,44 @@
    "onboard": 0,
    "type": "Link",
    "workflow_state": null
+  },
+  {
+   "hidden": 0,
+   "label": "Reports",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "app": "c4agent",
+   "hidden": 0,
+   "label": "Import Pipeline",
+   "link_to": "Import Pipeline",
+   "type": "Link",
+   "link_type": "Report"
+  },
+  {
+   "app": "c4agent",
+   "hidden": 0,
+   "label": "Shipment Cost Summary",
+   "link_to": "Shipment Cost Summary",
+   "type": "Link",
+   "link_type": "Report"
+  },
+  {
+   "app": "c4agent",
+   "hidden": 0,
+   "label": "Container Cost Summary",
+   "link_to": "Container Cost Summary",
+   "type": "Link",
+   "link_type": "Report"
+  },
+  {
+   "app": "c4agent",
+   "hidden": 0,
+   "label": "Sinosure Exposure",
+   "link_to": "Sinosure Exposure",
+   "type": "Link",
+   "link_type": "Report"
   }
  ],
  "modified": "2026-08-31 00:00:00.000000",
