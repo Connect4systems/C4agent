@@ -44,7 +44,6 @@ def make_import_shipment(source_name, target_doc=None):
 			"rate": po_item.rate,
 		})
 	
-	target_doc.set_docstatus(0)
 	return target_doc
 
 
