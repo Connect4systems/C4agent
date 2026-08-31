@@ -192,7 +192,7 @@
  "links": [
   {
    "link_doctype": "Import Expense",
-   "link_field": "import_container"
+   "link_fieldname": "import_container"
   }
  ],
  "modified": "2026-08-31 00:00:00.000000",

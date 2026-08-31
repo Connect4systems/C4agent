@@ -45,3 +45,11 @@ class TestC4agentReleaseContracts(FrappeTestCase):
 		self.assertIsNotNone(vat)
 		self.assertEqual(vat.include_in_landed_cost, 0)
 		self.assertEqual(vat.is_recoverable_tax, 1)
+
+	def test_import_shipment_dashboard_has_one_valid_mapping_per_item(self):
+		data = frappe.get_meta("Import Shipment").get_dashboard_data()
+		items = [item for group in data.transactions for item in group.get("items", [])]
+		self.assertEqual(len(items), len(set(items)))
+		for doctype in items:
+			fieldname = data.get("non_standard_fieldnames", {}).get(doctype) or data.get("fieldname")
+			self.assertTrue(fieldname, f"Dashboard field mapping is missing for {doctype}")

@@ -29,7 +29,7 @@
   {"fieldname":"fee_payment_reference","fieldtype":"Data","label":"Fee Payment Reference"},
   {"fieldname":"notes","fieldtype":"Small Text","label":"Notes"}
  ],
- "links":[{"link_doctype":"Import Shipment","link_field":"sinosure_coverage"}],
+ "links":[{"link_doctype":"Import Shipment","link_fieldname":"sinosure_coverage"}],
  "permissions":[
   {"role":"Finance User","read":1,"create":1,"write":1,"report":1},
   {"role":"Finance Manager","read":1,"create":1,"write":1,"delete":1,"report":1},
