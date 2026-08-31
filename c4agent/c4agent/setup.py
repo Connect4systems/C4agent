@@ -80,6 +80,15 @@ DEFAULT_IMPORT_EXPENSE_TYPES = (
 	("Other Import Expense", 0, 0, "Manual"),
 )
 
+C4AGENT_WORKSPACE_CONTENT = [
+	{"id": "c4agent-header", "type": "header", "data": {"text": '<span class="h4"><b>C4agent Import Management</b></span>', "col": 12}},
+	{"id": "c4agent-operations", "type": "card", "data": {"card_name": "Operations", "col": 4}},
+	{"id": "c4agent-finance", "type": "card", "data": {"card_name": "Finance", "col": 4}},
+	{"id": "c4agent-masters", "type": "card", "data": {"card_name": "Masters", "col": 4}},
+	{"id": "c4agent-erpnext", "type": "card", "data": {"card_name": "ERPNext Integration", "col": 4}},
+	{"id": "c4agent-reports", "type": "card", "data": {"card_name": "Reports", "col": 4}},
+]
+
 
 def setup_c4agent():
 	"""Install or update app-owned setup records idempotently."""
@@ -90,6 +99,17 @@ def setup_c4agent():
 	setup_import_expense_workflow()
 	setup_customs_declaration_workflow()
 	setup_sinosure_workflow()
+	repair_c4agent_workspace()
+
+
+def repair_c4agent_workspace():
+	"""Repair legacy installs whose empty workspace content crashes Frappe 15 Desk."""
+	if not frappe.db.exists("Workspace", "C4agent"):
+		return
+	values = {"title": "C4agent"}
+	if not frappe.db.get_value("Workspace", "C4agent", "content"):
+		values["content"] = frappe.as_json(C4AGENT_WORKSPACE_CONTENT)
+	frappe.db.set_value("Workspace", "C4agent", values, update_modified=False)
 
 
 def create_c4agent_custom_fields():

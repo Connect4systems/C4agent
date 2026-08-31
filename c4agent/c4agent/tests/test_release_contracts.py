@@ -53,3 +53,9 @@ class TestC4agentReleaseContracts(FrappeTestCase):
 		for doctype in items:
 			fieldname = data.get("non_standard_fieldnames", {}).get(doctype) or data.get("fieldname")
 			self.assertTrue(fieldname, f"Dashboard field mapping is missing for {doctype}")
+
+	def test_c4agent_workspace_has_renderable_content(self):
+		workspace = frappe.get_doc("Workspace", "C4agent")
+		self.assertEqual(workspace.title, "C4agent")
+		self.assertTrue(workspace.content)
+		self.assertIsInstance(frappe.parse_json(workspace.content), list)

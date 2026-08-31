@@ -1,6 +1,7 @@
 {
  "creation": "2026-08-31 00:00:00.000000",
  "custom": 1,
+ "content": "[{\"id\":\"c4agent-header\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>C4agent Import Management</b></span>\",\"col\":12}},{\"id\":\"c4agent-operations\",\"type\":\"card\",\"data\":{\"card_name\":\"Operations\",\"col\":4}},{\"id\":\"c4agent-finance\",\"type\":\"card\",\"data\":{\"card_name\":\"Finance\",\"col\":4}},{\"id\":\"c4agent-masters\",\"type\":\"card\",\"data\":{\"card_name\":\"Masters\",\"col\":4}},{\"id\":\"c4agent-erpnext\",\"type\":\"card\",\"data\":{\"card_name\":\"ERPNext Integration\",\"col\":4}},{\"id\":\"c4agent-reports\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
@@ -211,6 +212,6 @@
  "public": 1,
  "restrict_to_domain": "",
  "sidebar_image": "",
- "title": null,
+ "title": "C4agent",
  "workflow_name": ""
 }
