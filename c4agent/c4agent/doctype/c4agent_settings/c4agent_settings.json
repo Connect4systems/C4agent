@@ -7,8 +7,6 @@
  "field_order": [
   "general_section",
   "default_goods_in_transit_warehouse",
-  "default_import_expense_cost_center",
-  "default_import_expense_project",
   "validation_section",
   "require_acid_before_departure",
   "require_container_number",
@@ -28,18 +26,6 @@
    "fieldtype": "Link",
    "label": "Default Goods In Transit Warehouse",
    "options": "Warehouse"
-  },
-  {
-   "fieldname": "default_import_expense_cost_center",
-   "fieldtype": "Link",
-   "label": "Default Import Expense Cost Center",
-   "options": "Cost Center"
-  },
-  {
-   "fieldname": "default_import_expense_project",
-   "fieldtype": "Link",
-   "label": "Default Import Expense Project",
-   "options": "Project"
   },
   {
    "fieldname": "validation_section",
