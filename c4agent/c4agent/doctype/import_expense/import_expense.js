@@ -3,6 +3,12 @@
 
 frappe.ui.form.on("Import Expense", {
 	refresh(frm) {
+		if (frm.doc.expense_type) {
+			const type = frm.doc.expense_type;
+			frappe.db.get_value("Import Expense Type", type, "is_recoverable_tax").then(result => {
+				if (frm.doc.expense_type === type) frm._recoverable_tax = !!result.message.is_recoverable_tax;
+			});
+		}
 		if (frm.doc.docstatus === 1 && ["Approved", "Allocated", "Partly Paid"].includes(frm.doc.expense_status)
 			&& frm.doc.payment_status !== "Paid") {
 			frm.add_custom_button(__("Create Payment"), () => open_expense_payment(frm), __("Actions"));
@@ -24,7 +30,10 @@ frappe.ui.form.on("Import Expense", {
 		});
 
 		frm.set_query("expense_account", function() {
-			return {filters: {company: frm.doc.company || "", is_group: 0}};
+			const filters = {company: frm.doc.company || "", is_group: 0, disabled: 0};
+			return frm._recoverable_tax
+				? {filters, or_filters: [["Account", "root_type", "in", ["Expense", "Asset"]], ["Account", "account_type", "=", "Tax"]]}
+				: {filters: {...filters, root_type: "Expense"}};
 		});
 
 		frm.set_query("supplier_invoice", function() {
@@ -48,22 +57,39 @@ frappe.ui.form.on("Import Expense", {
 			exchange_rate: invoice.conversion_rate});
 	},
 
-	company(frm) {
-		frm.set_value("import_shipment", null);
-		frm.set_value("expense_account", null);
+	async import_shipment(frm) {
+		if (!frm.doc.import_shipment) return;
+		const name = frm.doc.import_shipment;
+		const result = await frappe.db.get_value("Import Shipment", name, "company");
+		if (frm.doc.import_shipment !== name) return;
+		await frm.set_value("company", result.message.company);
+		await frm.trigger("expense_type");
+	},
+	async company(frm) {
+		if (frm.doc.import_shipment) {
+			const name = frm.doc.import_shipment;
+			const result = await frappe.db.get_value("Import Shipment", name, "company");
+			if (frm.doc.import_shipment === name && result.message.company !== frm.doc.company) {
+				await frm.set_value("import_shipment", "");
+			}
+		}
+		await frm.set_value("expense_account", "");
+		await frm.trigger("expense_type");
 	},
 
 	async expense_type(frm) {
 		if (!frm.doc.expense_type) return;
-		const result = await frappe.db.get_value(
-			"Import Expense Type",
-			frm.doc.expense_type,
-			["default_expense_account", "include_in_landed_cost", "is_recoverable_tax", "allocation_basis"]
-		);
+		const expense_type = frm.doc.expense_type;
+		const company = frm.doc.company;
+		const result = await frappe.call({
+			method: "c4agent.c4agent.doctype.import_expense_type.import_expense_type.get_company_defaults",
+			args: {expense_type, company}
+		});
+		if (frm.doc.expense_type !== expense_type || frm.doc.company !== company) return;
 		const values = result.message || {};
-		if (values.default_expense_account) {
-			await frm.set_value("expense_account", values.default_expense_account);
-		}
+		await frm.set_value("expense_account", values.default_expense_account || "");
+		frm._recoverable_tax = !!values.is_recoverable_tax;
+		if (!values.default_expense_account && company) frappe.msgprint(__("Configure a default account for this company in Import Expense Type, or select a valid Expense / Tax Account."));
 		await frm.set_value(
 			"include_in_landed_cost",
 			values.is_recoverable_tax ? 0 : values.include_in_landed_cost

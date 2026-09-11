@@ -10,7 +10,7 @@
   "expense_type_name",
   "disabled",
   "accounting_section",
-  "default_expense_account",
+  "company_accounts",
   "landed_cost_section",
   "include_in_landed_cost",
   "is_recoverable_tax",
@@ -39,11 +39,10 @@
    "label": "Accounting Defaults"
   },
   {
-   "description": "Optional company account default. It can be overridden on an expense.",
-   "fieldname": "default_expense_account",
-   "fieldtype": "Link",
-   "label": "Default Expense Account",
-   "options": "Account"
+   "fieldname": "company_accounts",
+   "label": "Company Accounts",
+   "fieldtype": "Table",
+   "options": "Import Expense Company Account"
   },
   {
    "fieldname": "landed_cost_section",

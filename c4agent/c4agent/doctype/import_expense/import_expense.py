@@ -13,6 +13,8 @@ class ImportExpense(Document):
 	"""Operational cost attribution linked to standard ERPNext accounting records."""
 
 	def before_validate(self):
+		if self.docstatus == 0 and self.import_shipment:
+			self.company = frappe.db.get_value("Import Shipment", self.import_shipment, "company")
 		self.fetch_supplier_invoice_amount()
 		self.apply_expense_type_defaults()
 		self.apply_accounting_defaults()
@@ -67,36 +69,21 @@ class ImportExpense(Document):
 		)
 
 	def apply_expense_type_defaults(self):
-		if not self.expense_type:
+		if not self.expense_type or self.docstatus != 0:
 			return
-
-		previous = self.get_doc_before_save()
-		if previous and previous.expense_type == self.expense_type:
-			return
-
-		expense_type = frappe.db.get_value(
-			"Import Expense Type",
-			self.expense_type,
-			[
-				"default_expense_account",
-				"include_in_landed_cost",
-				"is_recoverable_tax",
-				"allocation_basis",
-				"disabled",
-			],
-			as_dict=True,
-		)
-		if not expense_type:
-			return
-		if expense_type.disabled:
+		from c4agent.c4agent.doctype.import_expense_type.import_expense_type import get_company_defaults
+		values = get_company_defaults(self.expense_type, self.company)
+		if values["disabled"]:
 			frappe.throw(f"Import Expense Type {self.expense_type} is disabled")
-
-		if expense_type.default_expense_account:
-			self.expense_account = expense_type.default_expense_account
-		self.include_in_landed_cost = 0 if expense_type.is_recoverable_tax else (
-			expense_type.include_in_landed_cost
-		)
-		self.allocation_basis = expense_type.allocation_basis or "Amount"
+		previous = self.get_doc_before_save()
+		changed = previous and (previous.expense_type != self.expense_type or previous.company != self.company)
+		if not self.expense_account or (changed and self.expense_account == previous.expense_account):
+			self.expense_account = values["default_expense_account"]
+			if not self.expense_account:
+				frappe.throw("Configure a default account for this company in Import Expense Type, or select a valid Expense / Tax Account")
+		if not previous or previous.expense_type != self.expense_type:
+			self.include_in_landed_cost = 0 if values["is_recoverable_tax"] else values["include_in_landed_cost"]
+			self.allocation_basis = values["allocation_basis"] or "Amount"
 
 	def set_currency_values(self):
 		if not self.company:
@@ -169,6 +156,9 @@ class ImportExpense(Document):
 			frappe.throw("Exchange Rate must be greater than zero")
 
 	def validate_expense_account(self):
+		from c4agent.c4agent.doctype.import_expense_type.import_expense_type import validate_company_account
+		validate_company_account(self.expense_account, self.company,
+			frappe.db.get_value("Import Expense Type", self.expense_type, "is_recoverable_tax"))
 		account = frappe.db.get_value(
 			"Account",
 			self.expense_account,
