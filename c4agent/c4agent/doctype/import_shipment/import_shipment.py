@@ -18,6 +18,35 @@ class ImportShipment(Document):
 			frappe.db.get_value("Purchase Order", self.purchase_order, "set_warehouse")
 			if self.purchase_order else None
 		)
+		self.set_commercial_exchange_rate()
+
+	def set_commercial_exchange_rate(self):
+		from erpnext.setup.utils import get_exchange_rate
+
+		if not self.currency:
+			self.currency = (
+				frappe.db.get_value("Purchase Order", self.purchase_order, "currency")
+				if self.purchase_order else self.supplier_currency
+			)
+		self.company_currency = (
+			frappe.db.get_value("Company", self.company, "default_currency")
+			if self.company else None
+		)
+		if not self.currency or not self.company_currency:
+			self.exchange_rate = 0
+			return
+		if self.currency == self.company_currency:
+			self.exchange_rate = 1
+			return
+		previous = self.get_doc_before_save()
+		changed = previous and any(
+			str(previous.get(field) or "") != str(self.get(field) or "")
+			for field in ("currency", "company", "commercial_invoice_date")
+		)
+		if not self.exchange_rate or changed:
+			self.exchange_rate = get_exchange_rate(
+				self.currency, self.company_currency, self.commercial_invoice_date, "for_buying"
+			) or 0
 
 	def validate(self):
 		"""Validate shipment data"""

@@ -1,4 +1,13 @@
 frappe.ui.form.on("Import Shipment", {
+	currency: update_commercial_exchange_rate,
+	company_currency: update_commercial_exchange_rate,
+	commercial_invoice_date: update_commercial_exchange_rate,
+	async company(frm) {
+		const result = frm.doc.company
+			? await frappe.db.get_value("Company", frm.doc.company, "default_currency")
+			: null;
+		await frm.set_value("company_currency", result?.message?.default_currency || "");
+	},
 	refresh(frm) {
 		frm.set_query("purchase_order", () => ({ filters: { docstatus: 1, company: frm.doc.company, supplier: frm.doc.supplier } }));
 		frm.set_query("sinosure_coverage", () => ({ filters: { company: frm.doc.company, supplier: frm.doc.supplier, coverage_status: "Active" } }));
@@ -31,3 +40,25 @@ frappe.ui.form.on("Import Shipment", {
 		}
 	},
 });
+
+async function update_commercial_exchange_rate(frm) {
+	const {currency, company_currency, commercial_invoice_date} = frm.doc;
+	const request = (frm._commercial_rate_request || 0) + 1;
+	frm._commercial_rate_request = request;
+	await frm.set_value("exchange_rate", 0);
+	if (!currency || !company_currency) return;
+	if (currency === company_currency) {
+		await frm.set_value("exchange_rate", 1);
+		return;
+	}
+	const result = await frappe.call({
+		method: "erpnext.setup.utils.get_exchange_rate",
+		args: {from_currency: currency, to_currency: company_currency,
+			transaction_date: commercial_invoice_date || frappe.datetime.get_today(), args: "for_buying"}
+	});
+	if (frm._commercial_rate_request !== request) return;
+	await frm.set_value("exchange_rate", result.message || 0);
+	if (!result.message) {
+		frappe.msgprint(__("No exchange rate found. Add a Currency Exchange record or enter the Exchange Rate manually."));
+	}
+}
