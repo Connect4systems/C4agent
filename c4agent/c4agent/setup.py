@@ -138,6 +138,10 @@ def repair_c4agent_workspace():
 		if link.type != "Link" or link.label not in C4AGENT_WORKSPACE_LINKS:
 			continue
 		link.link_type, link.link_to = C4AGENT_WORKSPACE_LINKS[link.label]
+		if link.link_type == "Report":
+			report = frappe.get_doc("Report", link.link_to)
+			link.is_query_report = int(report.report_type in ("Script Report", "Query Report"))
+			link.report_ref_doctype = report.ref_doctype
 
 	workspace.save(ignore_permissions=True)
 

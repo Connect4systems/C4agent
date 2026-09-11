@@ -188,7 +188,9 @@
    "label": "Import Pipeline",
    "link_to": "Import Pipeline",
    "type": "Link",
-   "link_type": "Report"
+   "link_type": "Report",
+   "is_query_report": 1,
+   "report_ref_doctype": "Import Shipment"
   },
   {
    "app": "c4agent",
@@ -196,7 +198,9 @@
    "label": "Shipment Cost Summary",
    "link_to": "Shipment Cost Summary",
    "type": "Link",
-   "link_type": "Report"
+   "link_type": "Report",
+   "is_query_report": 1,
+   "report_ref_doctype": "Import Shipment"
   },
   {
    "app": "c4agent",
@@ -204,7 +208,9 @@
    "label": "Sinosure Exposure",
    "link_to": "Sinosure Exposure",
    "type": "Link",
-   "link_type": "Report"
+   "link_type": "Report",
+   "is_query_report": 1,
+   "report_ref_doctype": "Sinosure Coverage"
   }
  ],
  "modified": "2026-08-31 00:00:00.000000",
