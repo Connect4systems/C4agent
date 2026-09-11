@@ -6,3 +6,4 @@
 # Patches added in this section will be executed after doctypes are migrated
 c4agent.patches.backfill_shipment_id
 c4agent.patches.remove_import_container
+c4agent.patches.cleanup_retired_container_references
