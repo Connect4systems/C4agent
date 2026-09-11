@@ -80,6 +80,7 @@ class TestImportShipment(FrappeTestCase):
 		
 		shipment = frappe.get_doc({
 			"doctype": "Import Shipment",
+			"shipment_id": "TEST-SHIP-" + frappe.generate_hash(length=10),
 			"company": self.company,
 			"supplier": self.supplier,
 			"purchase_order": po,
@@ -89,6 +90,7 @@ class TestImportShipment(FrappeTestCase):
 		})
 		
 		shipment.insert()
+		self.assertEqual(shipment.name, shipment.shipment_id)
 		self.assertEqual(shipment.shipment_status, "Draft")
 		self.assertIsNotNone(shipment.shipment_title)
 
@@ -117,6 +119,7 @@ class TestImportShipment(FrappeTestCase):
 		
 		shipment = frappe.get_doc({
 			"doctype": "Import Shipment",
+			"shipment_id": "TEST-SHIP-" + frappe.generate_hash(length=10),
 			"company": self.company,
 			"supplier": wrong_supplier,
 			"purchase_order": po
@@ -138,6 +141,7 @@ class TestImportShipment(FrappeTestCase):
 		
 		shipment = frappe.get_doc({
 			"doctype": "Import Shipment",
+			"shipment_id": "TEST-SHIP-" + frappe.generate_hash(length=10),
 			"company": wrong_company,
 			"supplier": self.supplier,
 			"purchase_order": po
@@ -153,6 +157,7 @@ class TestImportShipment(FrappeTestCase):
 		
 		shipment = frappe.get_doc({
 			"doctype": "Import Shipment",
+			"shipment_id": "TEST-SHIP-" + frappe.generate_hash(length=10),
 			"company": self.company,
 			"supplier": self.supplier,
 			"purchase_order": po,
@@ -168,6 +173,7 @@ class TestImportShipment(FrappeTestCase):
 		
 		shipment = frappe.get_doc({
 			"doctype": "Import Shipment",
+			"shipment_id": "TEST-SHIP-" + frappe.generate_hash(length=10),
 			"company": self.company,
 			"supplier": self.supplier,
 			"purchase_order": po
@@ -191,6 +197,7 @@ class TestImportShipment(FrappeTestCase):
 		po = self.create_test_po()
 		shipment = frappe.get_doc({
 			"doctype": "Import Shipment",
+			"shipment_id": "TEST-SHIP-" + frappe.generate_hash(length=10),
 			"company": self.company,
 			"supplier": self.supplier,
 			"purchase_order": po
@@ -221,6 +228,7 @@ class TestImportShipment(FrappeTestCase):
 		po = self.create_test_po()
 		shipment = frappe.get_doc({
 			"doctype": "Import Shipment",
+			"shipment_id": "TEST-SHIP-" + frappe.generate_hash(length=10),
 			"company": self.company,
 			"supplier": self.supplier,
 			"purchase_order": po,
@@ -285,6 +293,7 @@ class TestImportContainer(FrappeTestCase):
 		
 		self.shipment = frappe.get_doc({
 			"doctype": "Import Shipment",
+			"shipment_id": "TEST-SHIP-" + frappe.generate_hash(length=10),
 			"company": self.company,
 			"supplier": self.supplier,
 			"purchase_order": po.name

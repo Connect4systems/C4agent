@@ -1,13 +1,14 @@
 {
  "actions": [],
  "allow_rename": 0,
- "autoname": "format:IMP-{YYYY}-{#####}",
+ "autoname": "field:shipment_id",
  "creation": "2026-08-31 00:00:00.000000",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
  "is_submittable": 0,
  "field_order": [
+  "shipment_id",
   "shipment_title",
   "general_section",
   "company",
@@ -66,6 +67,15 @@
   ,"reopen_reason"
  ],
  "fields": [
+  {
+   "fieldname": "shipment_id",
+   "fieldtype": "Data",
+   "label": "Shipment ID",
+   "reqd": 1,
+   "unique": 1,
+   "in_standard_filter": 1,
+   "set_only_once": 1
+  },
   {
    "fieldname": "shipment_title",
    "fieldtype": "Data",
@@ -415,11 +425,11 @@
    "report": 1,
    "role": "Import Manager",
    "share": 1,
-   "submit": 1,
+   "submit": 0,
    "write": 1
   },
   {
-   "amend": 1,
+   "amend": 0,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -429,7 +439,7 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
-   "submit": 1,
+   "submit": 0,
    "write": 1
   }
  ],

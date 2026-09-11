@@ -75,6 +75,7 @@ class TestImportExpense(FrappeTestCase):
 		return frappe.get_doc(
 			{
 				"doctype": "Import Shipment",
+				"shipment_id": "TEST-SHIP-" + frappe.generate_hash(length=10),
 				"company": self.company,
 				"supplier": self.supplier,
 				"purchase_order": self.purchase_order,

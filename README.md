@@ -38,6 +38,8 @@ For a first installation, run `bench --site green.connect4systems.com install-ap
 
 ## Configuration
 
+Import Shipment requires a unique **Shipment ID** when creating a record, including drafts mapped from Purchase Orders. This ID becomes the document name and is available as a standard list filter. It can only be set on creation. Migration fills missing Shipment IDs on existing records with their current document names, preserving links.
+
 Open **C4agent Settings** and review:
 
 - goods-in-transit warehouse
