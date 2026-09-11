@@ -16,6 +16,10 @@ class ImportExpense(Document):
 		self.apply_expense_type_defaults()
 		self.apply_accounting_defaults()
 		self.set_currency_values()
+		if self.docstatus == 0:
+			self.total_paid = 0
+			self.outstanding_amount = self.amount
+			self.payment_status = "Unpaid"
 
 	def validate(self):
 		self.validate_shipment()
@@ -31,6 +35,9 @@ class ImportExpense(Document):
 			frappe.throw("Import Expense must be approved through the finance workflow")
 
 	def before_cancel(self):
+		from c4agent.c4agent.services.expense_payment import payment_totals
+		if payment_totals(self)[0] > 0:
+			frappe.throw("Cancel the payment Journal Entries before cancelling this expense")
 		if self.landed_cost_allocated:
 			frappe.throw("Cancel the linked Landed Cost Voucher before cancelling this expense")
 

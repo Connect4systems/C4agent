@@ -142,6 +142,12 @@ after_migrate = "c4agent.c4agent.setup.setup_c4agent"
 # Hook on document methods and events
 
 doc_events = {
+	"Journal Entry": {
+		"validate": "c4agent.c4agent.services.expense_payment.validate_payment_journal",
+		"before_update_after_submit": "c4agent.c4agent.services.expense_payment.validate_payment_journal",
+		"on_submit": "c4agent.c4agent.services.expense_payment.update_payment_summary",
+		"on_cancel": "c4agent.c4agent.services.expense_payment.update_payment_summary",
+	},
 	"Purchase Invoice": {
 		"validate": "c4agent.c4agent.integrations.purchase_invoice.validate_import_shipment"
 	},

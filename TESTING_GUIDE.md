@@ -90,3 +90,12 @@ Expected: closure/reopen and exceptions create timeline evidence; reopening chan
 ## Acceptance confirmation
 
 Confirm these five totals against the customer workbook for the same shipment: supplier goods value, recoverable import VAT, total capitalizable import expenses, final LCV charges, and shipment totals. Record any rounding or policy difference before using the workflow on live imports.
+
+## Approved expense payment checks
+
+1. Approve an unbooked expense of 100. Create a payment of 40 and verify the submitted Journal Entry debits Expense / Tax Account, credits the selected Bank/Cash account, and includes the shipment and expense references. Payment Status must be Partly Paid with 60 outstanding.
+2. Pay the remaining 60. Confirm Paid status and two entries in payment history. Cancel the second Journal Entry; confirm Partly Paid and 60 outstanding. Cancelling the expense while the first payment remains submitted must be rejected.
+3. Link an approved expense to a submitted Supplier Invoice. Pay partly and confirm the debit uses the invoice payable account, Supplier party, and Purchase Invoice reference. Confirm invoice outstanding decreases without another expense debit.
+4. Attempt amounts above the expense balance and above the invoice balance, zero amounts, and payment before approval. All must fail without a submitted payment. Retry the same request and confirm only one Journal Entry exists.
+5. Use a foreign-currency invoice with a payment-date rate different from its booking rate. Confirm supplier settlement, bank amount, and the Company's Exchange Gain / Loss account balance the journal.
+6. Confirm users lacking Journal Entry Create or Submit permission cannot post payments. Confirm rate lookup failure leaves the dialog unable to post until a valid Currency Exchange rate is configured.

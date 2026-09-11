@@ -71,3 +71,13 @@ Follow [TESTING_GUIDE.md](TESTING_GUIDE.md) for the complete business UAT.
 License: MIT
 
 Import Container tracking has been replaced by editable **No of Containers** on Import Shipment. Run `bench --site your-site-name migrate` after deploying this update. The migration carries existing container counts forward and removes retired container metadata and integration fields. Package, gross weight, and CBM totals are now entered directly on the shipment.
+
+## Import Expense payments
+
+After approval, use **Actions > Create Payment**. The dialog defaults to today and the unpaid balance, fetches the expense currency and buying exchange rate, and defaults the bank/cash account from Mode of Payment for the company. Enter a smaller amount for a partial payment. Confirmation creates and submits a Journal Entry using the current user's accounting permissions.
+
+Invoice-linked expenses settle the invoice payable account with Supplier and Purchase Invoice references. Unbooked expenses debit Expense / Tax Account. Expenses already linked to a Journal Entry or Payment Entry must be settled through that existing transaction to avoid duplicate expense recognition. Invoice payments are capped at both outstanding balances. Currency differences use the Company's Exchange Gain / Loss Account; non-invoice rounding differences use its Round Off Account.
+
+Payment Status (Unpaid, Partly Paid, Paid), Total Paid, Outstanding Amount, and Journal Entry history track payments created through this action separately from approval and landed-cost allocation. Cancel a payment Journal Entry to reverse its payment totals; cancel existing payments before cancelling the expense. External payments reduce the invoice's available balance but are not automatically attributed to this expense's payment history.
+
+Deploy with `bench --site green.connect4systems.com migrate` and restart the bench processes. Validate on a test site with same-currency and foreign-currency accounts before recording live payments. Local orchestration checks: `python -m unittest discover -s tests -p test_expense_payment_unit.py`.

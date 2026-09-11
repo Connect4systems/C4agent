@@ -111,6 +111,8 @@ def setup_c4agent():
 	"""Install or update app-owned setup records idempotently."""
 	setup_c4agent_roles()
 	create_c4agent_custom_fields()
+	from c4agent.c4agent.services.expense_payment import setup_payment_fields
+	setup_payment_fields()
 	setup_import_shipment_workflow()
 	seed_import_expense_types()
 	setup_import_expense_workflow()

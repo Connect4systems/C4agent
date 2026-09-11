@@ -7,3 +7,4 @@
 c4agent.patches.backfill_shipment_id
 c4agent.patches.remove_import_container
 c4agent.patches.cleanup_retired_container_references
+c4agent.patches.initialize_expense_payment_totals
