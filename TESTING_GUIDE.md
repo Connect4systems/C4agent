@@ -33,10 +33,10 @@ Expected: users see only actions allowed by their roles; no company account is h
 2. Use **Create > Import Shipment** from the PO.
 3. Enter shipped quantities, ACID and issue date, shipping details, ETD/ETA, and documents.
 4. Create two shipments from the same PO if partial shipping is required.
-5. Add one or more containers.
+5. Enter No of Containers on the shipment.
 6. Progress Draft → Ordered → Booked → In Transit → Arrived.
 
-Expected: the total shipped quantity across active shipments cannot exceed the PO; dates, container summaries, and watts are calculated; workflow prerequisites cannot be bypassed by direct saves.
+Expected: the total shipped quantity across active shipments cannot exceed the PO; dates and watts are calculated; the entered container count survives saving; workflow prerequisites cannot be bypassed by direct saves.
 
 ## 4. Supplier invoice and Sinosure
 
@@ -60,12 +60,12 @@ Expected: Paid/Released requires an accounting reference; Released requires a re
 ## 6. Receipt and import expenses
 
 1. Create and submit one or more standard Purchase Receipts linked to the shipment.
-2. Assign containers on receipt rows when the setting requires it.
+2. Select the Import Shipment on the receipt.
 3. Create Import Expenses for freight, duty, broker, port, transport, VAT and other customer-sheet costs.
 4. Link each expense to the ERPNext accounting document that posted it.
 5. Progress expenses through verification and approval.
 
-Expected: currencies convert to company currency; the account must be a non-group company account; container-level totals update; Import VAT is excluded from landed cost by default; similar expenses warn but remain allowed.
+Expected: currencies convert to company currency; the account must be a non-group company account; shipment expense totals update; Import VAT is excluded from landed cost by default; similar expenses warn but remain allowed.
 
 ## 7. Landed cost
 
@@ -89,4 +89,4 @@ Expected: closure/reopen and exceptions create timeline evidence; reopening chan
 
 ## Acceptance confirmation
 
-Confirm these five totals against the customer workbook for the same shipment: supplier goods value, recoverable import VAT, total capitalizable import expenses, final LCV charges, and container totals. Record any rounding or policy difference before using the workflow on live imports.
+Confirm these five totals against the customer workbook for the same shipment: supplier goods value, recoverable import VAT, total capitalizable import expenses, final LCV charges, and shipment totals. Record any rounding or policy difference before using the workflow on live imports.

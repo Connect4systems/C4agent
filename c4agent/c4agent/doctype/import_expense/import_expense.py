@@ -19,7 +19,6 @@ class ImportExpense(Document):
 
 	def validate(self):
 		self.validate_shipment()
-		self.validate_container()
 		self.validate_supplier_invoice()
 		self.validate_amount_and_exchange_rate()
 		self.validate_expense_account()
@@ -36,14 +35,13 @@ class ImportExpense(Document):
 			frappe.throw("Cancel the linked Landed Cost Voucher before cancelling this expense")
 
 	def on_submit(self):
-		refresh_import_expense_summaries(self.import_shipment, self.import_container)
+		refresh_import_expense_summaries(self.import_shipment)
 		if self.landed_cost_override_reason:
 			frappe.get_doc("Import Shipment", self.import_shipment).add_comment("Comment", f"Import Expense {self.name} landed-cost policy overridden: {self.landed_cost_override_reason}")
 
 	def on_cancel(self):
 		refresh_import_expense_summaries(
 			self.import_shipment,
-			self.import_container,
 			exclude_expense=self.name,
 		)
 
@@ -116,21 +114,6 @@ class ImportExpense(Document):
 			)
 		if shipment.shipment_status in ("Closed", "Cancelled"):
 			frappe.throw(f"Cannot add or change expenses on a {shipment.shipment_status} shipment")
-
-	def validate_container(self):
-		if not self.import_container:
-			return
-
-		container_shipment = frappe.db.get_value(
-			"Import Container", self.import_container, "import_shipment"
-		)
-		if not container_shipment:
-			frappe.throw(f"Import Container {self.import_container} does not exist")
-		if container_shipment != self.import_shipment:
-			frappe.throw(
-				f"Import Container {self.import_container} belongs to shipment "
-				f"{container_shipment}, not {self.import_shipment}"
-			)
 
 	def validate_supplier_invoice(self):
 		if not self.supplier_invoice:
@@ -214,7 +197,6 @@ class ImportExpense(Document):
 			"name": ("!=", self.name),
 			"docstatus": ("!=", 2),
 			"import_shipment": self.import_shipment,
-			"import_container": self.import_container or "",
 			"expense_type": self.expense_type,
 			"supplier": self.supplier or "",
 			"supplier_invoice": self.supplier_invoice or "",
@@ -230,8 +212,8 @@ class ImportExpense(Document):
 			)
 
 
-def refresh_import_expense_summaries(shipment_name, container_name=None, exclude_expense=None):
-	"""Refresh shipment and container base-currency expense summaries."""
+def refresh_import_expense_summaries(shipment_name, exclude_expense=None):
+	"""Refresh shipment base-currency expense summaries."""
 	filters = {"import_shipment": shipment_name, "docstatus": 1}
 	if exclude_expense:
 		filters["name"] = ("!=", exclude_expense)
@@ -246,47 +228,5 @@ def refresh_import_expense_summaries(shipment_name, container_name=None, exclude
 		shipment_name,
 		"total_import_expenses",
 		sum(row.base_amount or 0 for row in shipment_expenses),
-		update_modified=False,
-	)
-
-	if container_name:
-		refresh_container_expense_summary(container_name, exclude_expense)
-
-
-def refresh_container_expense_summary(container_name, exclude_expense=None):
-	"""Refresh the existing categorized container cost fields."""
-	filters = {"import_container": container_name, "docstatus": 1}
-	if exclude_expense:
-		filters["name"] = ("!=", exclude_expense)
-
-	expenses = frappe.get_all(
-		"Import Expense",
-		filters=filters,
-		fields=["expense_type", "base_amount"],
-	)
-	costs = {
-		"freight_cost": 0,
-		"port_cost": 0,
-		"storage_cost": 0,
-		"demurrage_cost": 0,
-		"transportation_cost": 0,
-		"other_cost": 0,
-	}
-	type_to_field = {
-		"Ocean Freight": "freight_cost",
-		"Port Charges": "port_cost",
-		"Storage": "storage_cost",
-		"Demurrage": "demurrage_cost",
-		"Transportation": "transportation_cost",
-	}
-	for expense in expenses:
-		fieldname = type_to_field.get(expense.expense_type, "other_cost")
-		costs[fieldname] += expense.base_amount or 0
-
-	costs["total_container_cost"] = sum(costs.values())
-	frappe.db.set_value(
-		"Import Container",
-		container_name,
-		costs,
 		update_modified=False,
 	)

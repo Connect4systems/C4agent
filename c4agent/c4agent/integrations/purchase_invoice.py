@@ -42,12 +42,3 @@ def validate_import_shipment(doc, method=None):
 	for row in doc.items:
 		if row.purchase_order and row.purchase_order != shipment.purchase_order:
 			frappe.throw(f"Row {row.idx}: Purchase Order does not belong to the linked Import Shipment")
-
-	seen = set()
-	for row in getattr(doc, "custom_import_containers", []):
-		if row.import_container in seen:
-			frappe.throw(f"Import Container {row.import_container} is listed more than once")
-		seen.add(row.import_container)
-		container_shipment = frappe.db.get_value("Import Container", row.import_container, "import_shipment")
-		if container_shipment != shipment.name:
-			frappe.throw(f"Import Container {row.import_container} does not belong to shipment {shipment.name}")

@@ -63,8 +63,8 @@
   "closing_section",
   "closed_on",
   "closed_by",
-  "close_override_reason"
-  ,"reopen_reason"
+  "close_override_reason",
+  "reopen_reason"
  ],
  "fields": [
   {
@@ -311,28 +311,30 @@
   {
    "fieldname": "container_count",
    "fieldtype": "Int",
-   "label": "Container Count",
-   "read_only": 1
+   "label": "No of Containers",
+   "read_only": 0,
+   "non_negative": 1,
+   "default": "0"
   },
   {
    "fieldname": "total_packages",
    "fieldtype": "Int",
    "label": "Total Packages",
-   "read_only": 1
+   "read_only": 0
   },
   {
    "fieldname": "total_gross_weight",
    "fieldtype": "Float",
    "label": "Total Gross Weight (kg)",
    "precision": 2,
-   "read_only": 1
+   "read_only": 0
   },
   {
    "fieldname": "total_cbm",
    "fieldtype": "Float",
    "label": "Total CBM",
    "precision": 2,
-   "read_only": 1
+   "read_only": 0
   },
   {
    "fieldname": "po_value",

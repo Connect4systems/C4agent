@@ -27,29 +27,12 @@ def validate_import_shipment(doc, method=None):
 			f"Import Shipment supplier '{shipment.supplier}'"
 		)
 	
-	# Validate container references
+	# Validate customs release
 	settings = frappe.get_single("C4agent Settings")
 	if settings.require_customs_release_before_receipt and not frappe.db.exists(
 		"Customs Declaration", {"import_shipment": doc.custom_import_shipment, "clearance_status": "Released"}
 	):
 		frappe.throw("A Released Customs Declaration is required before receiving this shipment")
-	for item in doc.items:
-		container_name = getattr(item, "custom_import_container", None)
-		if settings.require_container_on_purchase_receipt_item and not container_name:
-			frappe.throw(f"Row {item.idx}: Import Container is required")
-		if not container_name:
-			continue
-
-		container_shipment = frappe.db.get_value(
-			"Import Container", container_name, "import_shipment"
-		)
-		if not container_shipment:
-			frappe.throw(f"Row {item.idx}: Import Container {container_name} does not exist")
-		if container_shipment != doc.custom_import_shipment:
-			frappe.throw(
-				f"Row {item.idx}: Import Container {container_name} belongs to "
-				f"shipment {container_shipment}, not {doc.custom_import_shipment}"
-			)
 
 
 def on_submit(doc, method=None):

@@ -9,7 +9,7 @@ from frappe.utils import now_datetime
 class ImportShipment(Document):
 	"""
 	Central operational record for import shipments.
-	Tracks purchase order -> shipment -> containers -> customs -> receipt -> landed cost
+	Tracks purchase order -> shipment -> customs -> receipt -> landed cost
 	"""
 	
 	def validate(self):
@@ -277,19 +277,6 @@ class ImportShipment(Document):
 	
 	def refresh_summary_totals(self):
 		"""Calculate summary totals from linked records"""
-		self.container_count = frappe.db.count("Import Container", {"import_shipment": self.name})
-		
-		containers = frappe.get_all(
-			"Import Container",
-			filters={"import_shipment": self.name},
-			fields=["COUNT(*) as cnt", "SUM(packages) as pkg", "SUM(gross_weight) as gw", "SUM(cbm) as cbm"]
-		)
-		
-		if containers and containers[0]:
-			self.total_packages = containers[0].pkg or 0
-			self.total_gross_weight = containers[0].gw or 0
-			self.total_cbm = containers[0].cbm or 0
-		
 		# Total import expenses (company currency)
 		self.total_import_expenses = 0
 		if frappe.db.exists("DocType", "Import Expense"):

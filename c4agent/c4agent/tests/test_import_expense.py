@@ -104,19 +104,6 @@ class TestImportExpense(FrappeTestCase):
 		self.assertEqual(expense.include_in_landed_cost, 1)
 		self.assertEqual(expense.allocation_basis, "Amount")
 
-	def test_container_must_belong_to_expense_shipment(self):
-		other_shipment = self.create_shipment()
-		other_container = frappe.get_doc(
-			{
-				"doctype": "Import Container",
-				"import_shipment": other_shipment.name,
-				"container_number": "EXPENSE-MISMATCH-001",
-			}
-		).insert()
-
-		with self.assertRaises(frappe.ValidationError):
-			self.make_expense(import_container=other_container.name).insert()
-
 	def test_recoverable_import_vat_excluded_by_default(self):
 		expense = self.make_expense(expense_type="Import VAT").insert()
 

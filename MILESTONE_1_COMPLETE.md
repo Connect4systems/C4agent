@@ -1,3 +1,5 @@
+> Historical guide: Import Container tracking has been removed. Enter **No of Containers** on Import Shipment; container fields, validation, and reports described below no longer apply. See [README.md](README.md) and [TESTING_GUIDE.md](TESTING_GUIDE.md) for the current workflow.
+
 # MILESTONE 1 COMPLETION SUMMARY
 ## C4agent - Frappe/ERPNext Import Management App
 

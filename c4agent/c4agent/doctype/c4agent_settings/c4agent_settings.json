@@ -9,14 +9,12 @@
   "default_goods_in_transit_warehouse",
   "validation_section",
   "require_acid_before_departure",
-  "require_container_number",
   "require_customs_release_before_receipt",
   "require_landed_cost_before_closing",
   "allow_partial_shipment_closure",
-  "require_container_on_purchase_receipt_item"
-  ,"accounting_defaults_section"
-  ,"default_import_expense_cost_center"
-  ,"default_import_expense_project"
+  "accounting_defaults_section",
+  "default_import_expense_cost_center",
+  "default_import_expense_project"
  ],
  "fields": [
   {
@@ -41,12 +39,6 @@
    "label": "Require ACID Before Departure"
   },
   {
-   "fieldname": "require_container_number",
-   "fieldtype": "Check",
-   "label": "Require Container Number",
-   "default": 1
-  },
-  {
    "fieldname": "require_customs_release_before_receipt",
    "fieldtype": "Check",
    "label": "Require Customs Release Before Receipt"
@@ -61,11 +53,6 @@
    "fieldname": "allow_partial_shipment_closure",
    "fieldtype": "Check",
    "label": "Allow Partial Shipment Closure"
-  },
-  {
-   "fieldname": "require_container_on_purchase_receipt_item",
-   "fieldtype": "Check",
-   "label": "Require Container on Purchase Receipt Item"
   },
   {
    "fieldname": "accounting_defaults_section",

@@ -13,7 +13,6 @@
   "expense_status",
   "attribution_section",
   "import_shipment",
-  "import_container",
   "expense_type",
   "party_section",
   "supplier",
@@ -76,7 +75,7 @@
   {
    "fieldname": "attribution_section",
    "fieldtype": "Section Break",
-   "label": "Shipment and Container Attribution"
+   "label": "Shipment Attribution"
   },
   {
    "fieldname": "import_shipment",
@@ -85,12 +84,6 @@
    "label": "Import Shipment",
    "options": "Import Shipment",
    "reqd": 1
-  },
-  {
-   "fieldname": "import_container",
-   "fieldtype": "Link",
-   "label": "Import Container",
-   "options": "Import Container"
   },
   {
    "fieldname": "expense_type",

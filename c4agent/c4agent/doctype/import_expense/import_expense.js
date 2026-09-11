@@ -12,10 +12,6 @@ frappe.ui.form.on("Import Expense", {
 			};
 		});
 
-		frm.set_query("import_container", function() {
-			return {filters: {import_shipment: frm.doc.import_shipment || ""}};
-		});
-
 		frm.set_query("expense_type", function() {
 			return {filters: {disabled: 0}};
 		});
@@ -37,12 +33,7 @@ frappe.ui.form.on("Import Expense", {
 
 	company(frm) {
 		frm.set_value("import_shipment", null);
-		frm.set_value("import_container", null);
 		frm.set_value("expense_account", null);
-	},
-
-	import_shipment(frm) {
-		frm.set_value("import_container", null);
 	},
 
 	async expense_type(frm) {

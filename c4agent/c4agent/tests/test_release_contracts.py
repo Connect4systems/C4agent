@@ -5,7 +5,7 @@ from frappe.tests.utils import FrappeTestCase
 class TestC4agentReleaseContracts(FrappeTestCase):
 	def test_all_phase_doctypes_are_installed(self):
 		for doctype in (
-			"Import Shipment", "Import Container", "Customs Declaration",
+			"Import Shipment", "Customs Declaration",
 			"Import Expense Type", "Import Expense", "Sinosure Coverage",
 		):
 			self.assertTrue(frappe.db.exists("DocType", doctype), doctype)
@@ -24,11 +24,9 @@ class TestC4agentReleaseContracts(FrappeTestCase):
 	def test_standard_erpnext_integration_fields_exist(self):
 		for doctype, fieldname in (
 			("Purchase Invoice", "custom_import_shipment"),
-			("Purchase Invoice", "custom_import_containers"),
 			("Purchase Invoice", "custom_acid_issue_date"),
 			("Purchase Invoice", "custom_sinosure_reference"),
 			("Purchase Receipt", "custom_import_shipment"),
-			("Purchase Receipt Item", "custom_import_container"),
 			("Landed Cost Voucher", "custom_import_shipment"),
 			("Landed Cost Taxes and Charges", "custom_import_expense"),
 			("Supplier", "custom_is_foreign_supplier"),
@@ -37,7 +35,7 @@ class TestC4agentReleaseContracts(FrappeTestCase):
 			self.assertTrue(frappe.get_meta(doctype).has_field(fieldname), f"{doctype}.{fieldname}")
 
 	def test_release_reports_exist(self):
-		for report in ("Import Pipeline", "Shipment Cost Summary", "Container Cost Summary", "Sinosure Exposure"):
+		for report in ("Import Pipeline", "Shipment Cost Summary", "Sinosure Exposure"):
 			self.assertTrue(frappe.db.exists("Report", report), report)
 
 	def test_recoverable_vat_policy_is_seeded_safely(self):

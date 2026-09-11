@@ -45,7 +45,6 @@ required_apps = ["erpnext"]
 # include js in doctype views
 doctype_js = {
 	"Purchase Order": "public/js/purchase_order.js",
-	"Purchase Receipt": "public/js/purchase_receipt.js",
 	"Purchase Invoice": "public/js/purchase_invoice.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}

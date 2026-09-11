@@ -31,19 +31,6 @@
   {
    "app": "c4agent",
    "count": 0,
-   "doctype": "Import Container",
-   "hidden": 0,
-   "label": "Import Container",
-   "link_to": "Import Container",
-   "link_type": "DocType",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Link",
-   "workflow_state": null
-  },
-  {
-   "app": "c4agent",
-   "count": 0,
    "doctype": "Customs Declaration",
    "hidden": 0,
    "label": "Customs Declaration",
@@ -208,14 +195,6 @@
    "hidden": 0,
    "label": "Shipment Cost Summary",
    "link_to": "Shipment Cost Summary",
-   "type": "Link",
-   "link_type": "Report"
-  },
-  {
-   "app": "c4agent",
-   "hidden": 0,
-   "label": "Container Cost Summary",
-   "link_to": "Container Cost Summary",
    "type": "Link",
    "link_type": "Report"
   },

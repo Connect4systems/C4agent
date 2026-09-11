@@ -91,7 +91,6 @@ C4AGENT_WORKSPACE_CONTENT = [
 
 C4AGENT_WORKSPACE_LINKS = {
 	"Import Shipment": ("DocType", "Import Shipment"),
-	"Import Container": ("DocType", "Import Container"),
 	"Customs Declaration": ("DocType", "Customs Declaration"),
 	"Import Expense": ("DocType", "Import Expense"),
 	"Sinosure Coverage": ("DocType", "Sinosure Coverage"),
@@ -104,7 +103,6 @@ C4AGENT_WORKSPACE_LINKS = {
 	"Landed Cost Voucher": ("DocType", "Landed Cost Voucher"),
 	"Import Pipeline": ("Report", "Import Pipeline"),
 	"Shipment Cost Summary": ("Report", "Shipment Cost Summary"),
-	"Container Cost Summary": ("Report", "Container Cost Summary"),
 	"Sinosure Exposure": ("Report", "Sinosure Exposure"),
 }
 
@@ -273,13 +271,6 @@ def create_c4agent_custom_fields():
 				"read_only": 1,
 				"fetch_from": "custom_sinosure_coverage.sinosure_reference"
 			},
-			{
-				"fieldname": "custom_import_containers",
-				"fieldtype": "Table",
-				"label": "Import Containers",
-				"options": "Purchase Invoice Import Container",
-				"insert_after": "custom_sinosure_reference",
-			},
 		],
 		"Purchase Receipt": [
 			{
@@ -288,15 +279,6 @@ def create_c4agent_custom_fields():
 				"label": "Import Shipment",
 				"options": "Import Shipment",
 				"insert_after": "remarks"
-			},
-		],
-		"Purchase Receipt Item": [
-			{
-				"fieldname": "custom_import_container",
-				"fieldtype": "Link",
-				"label": "Import Container",
-				"options": "Import Container",
-				"insert_after": "price_list_rate"
 			},
 		],
 		"Landed Cost Voucher": [
