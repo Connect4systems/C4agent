@@ -12,6 +12,13 @@ class ImportShipment(Document):
 	Tracks purchase order -> shipment -> customs -> receipt -> landed cost
 	"""
 	
+	def before_validate(self):
+		"""Keep the destination aligned with the Purchase Order target warehouse."""
+		self.final_destination = (
+			frappe.db.get_value("Purchase Order", self.purchase_order, "set_warehouse")
+			if self.purchase_order else None
+		)
+
 	def validate(self):
 		"""Validate shipment data"""
 		self.generate_shipment_title()

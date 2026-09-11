@@ -240,8 +240,11 @@
   },
   {
    "fieldname": "final_destination",
-   "fieldtype": "Data",
-   "label": "Final Destination"
+   "fieldtype": "Link",
+   "label": "Final Destination",
+   "options": "Warehouse",
+   "fetch_from": "purchase_order.set_warehouse",
+   "read_only": 1
   },
   {
    "fieldname": "etd",

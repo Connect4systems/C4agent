@@ -39,6 +39,7 @@ def make_import_shipment(source_name, target_doc=None):
 				"field_map": {
 					"name": "purchase_order",
 					"currency": "supplier_currency",
+					"set_warehouse": "final_destination",
 				},
 			},
 			"Purchase Order Item": {

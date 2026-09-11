@@ -22,69 +22,87 @@
    "fieldname": "purchase_order_item",
    "fieldtype": "Data",
    "label": "Purchase Order Item",
-   "read_only": 0
+   "read_only": 0,
+   "in_list_view": 0
   },
   {
    "fieldname": "item_code",
    "fieldtype": "Link",
    "label": "Item Code",
    "reqd": 1,
-   "options": "Item"
+   "options": "Item",
+   "in_list_view": 1,
+   "columns": 3
   },
   {
    "fieldname": "item_name",
    "fieldtype": "Data",
    "label": "Item Name",
-   "read_only": 1
+   "read_only": 1,
+   "in_list_view": 1,
+   "columns": 2
   },
   {
    "fieldname": "uom",
    "fieldtype": "Link",
    "label": "UOM",
-   "options": "UOM"
+   "options": "UOM",
+   "in_list_view": 0
   },
   {
    "fieldname": "ordered_qty",
    "fieldtype": "Float",
    "label": "Ordered Qty",
-   "precision": 3
+   "precision": 3,
+   "in_list_view": 1,
+   "columns": 1
   },
   {
    "fieldname": "shipped_qty",
    "fieldtype": "Float",
    "label": "Shipped Qty",
-   "precision": 3
+   "precision": 3,
+   "in_list_view": 1,
+   "columns": 1
   },
   {
    "fieldname": "received_qty",
    "fieldtype": "Float",
    "label": "Received Qty",
    "precision": 3,
-   "read_only": 1
+   "read_only": 1,
+   "in_list_view": 1,
+   "columns": 1
   },
   {
    "fieldname": "rate",
    "fieldtype": "Currency",
-   "label": "Rate"
+   "label": "Rate",
+   "in_list_view": 1,
+   "columns": 1
   },
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
    "label": "Amount",
-   "read_only": 1
+   "read_only": 1,
+   "in_list_view": 1,
+   "columns": 1
   },
   {
    "fieldname": "wattage",
    "fieldtype": "Float",
    "label": "Wattage (for Solar Panels)",
-   "precision": 2
+   "precision": 2,
+   "in_list_view": 0
   },
   {
    "fieldname": "total_watts",
    "fieldtype": "Float",
    "label": "Total Watts",
    "precision": 0,
-   "read_only": 1
+   "read_only": 1,
+   "in_list_view": 0
   }
  ],
  "istable": 1,
@@ -97,5 +115,6 @@
  "permissions": [],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "editable_grid": 1
 }
