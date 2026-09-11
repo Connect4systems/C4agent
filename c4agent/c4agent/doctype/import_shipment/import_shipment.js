@@ -22,6 +22,12 @@ frappe.ui.form.on("Import Shipment", {
 			});
 		}
 		if (!frm.is_new() && ["Cleared", "Received"].includes(frm.doc.shipment_status)) {
+			frm.add_custom_button(__("Purchase Receipt"), () => {
+				frappe.model.open_mapped_doc({
+					method: "c4agent.c4agent.services.shipment_receipt.make_purchase_receipt",
+					frm: frm
+				});
+			}, __("Create"));
 			frm.add_custom_button(__("Create Landed Cost Vouchers"), () => {
 				frappe.call({
 					method: "c4agent.c4agent.services.costing.make_landed_cost_vouchers",
