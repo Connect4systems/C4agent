@@ -41,8 +41,9 @@ def on_submit(doc, method=None):
 		return
 	for row in doc.taxes:
 		if getattr(row, "custom_import_expense", None):
+			expense = frappe.get_doc("Import Expense", row.custom_import_expense)
 			frappe.db.set_value("Import Expense", row.custom_import_expense, {
-				"landed_cost_allocated": 1, "landed_cost_voucher": doc.name, "expense_status": "Allocated",
+				"landed_cost_allocated": 1, "landed_cost_voucher": doc.name, "expense_status": expense.payment_status if expense.payment_status in ("Partly Paid", "Paid") else "Allocated",
 			})
 	refresh_landed_cost_summary(doc.custom_import_shipment)
 	frappe.get_doc("Import Shipment", doc.custom_import_shipment).add_comment("Comment", f"Landed Cost Voucher {doc.name} submitted")
@@ -53,8 +54,9 @@ def on_cancel(doc, method=None):
 		return
 	for row in doc.taxes:
 		if getattr(row, "custom_import_expense", None) and frappe.db.get_value("Import Expense", row.custom_import_expense, "landed_cost_voucher") == doc.name:
+			expense = frappe.get_doc("Import Expense", row.custom_import_expense)
 			frappe.db.set_value("Import Expense", row.custom_import_expense, {
-				"landed_cost_allocated": 0, "landed_cost_voucher": None, "expense_status": "Approved",
+				"landed_cost_allocated": 0, "landed_cost_voucher": None, "expense_status": expense.payment_status if expense.payment_status in ("Partly Paid", "Paid") else "Approved",
 			})
 	refresh_landed_cost_summary(doc.custom_import_shipment, exclude_voucher=doc.name)
 	frappe.get_doc("Import Shipment", doc.custom_import_shipment).add_comment("Comment", f"Landed Cost Voucher {doc.name} cancelled")

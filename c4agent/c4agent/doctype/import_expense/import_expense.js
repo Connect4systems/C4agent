@@ -3,7 +3,7 @@
 
 frappe.ui.form.on("Import Expense", {
 	refresh(frm) {
-		if (frm.doc.docstatus === 1 && ["Approved", "Allocated"].includes(frm.doc.expense_status)
+		if (frm.doc.docstatus === 1 && ["Approved", "Allocated", "Partly Paid"].includes(frm.doc.expense_status)
 			&& frm.doc.payment_status !== "Paid") {
 			frm.add_custom_button(__("Create Payment"), () => open_expense_payment(frm), __("Actions"));
 		}
@@ -36,6 +36,16 @@ frappe.ui.form.on("Import Expense", {
 		frm.set_query("accounting_reference_doctype", function() {
 			return {filters: {name: ["in", ["Purchase Invoice", "Journal Entry", "Payment Entry"]]}};
 		});
+	},
+
+	async supplier_invoice(frm) {
+		if (!frm.doc.supplier_invoice) return;
+		const name = frm.doc.supplier_invoice;
+		const invoice = await frappe.db.get_doc("Purchase Invoice", name);
+		if (frm.doc.supplier_invoice !== name) return;
+		await frm.set_value({supplier: invoice.supplier, currency: invoice.currency,
+			amount: invoice.disable_rounded_total ? invoice.grand_total : (invoice.rounded_total || invoice.grand_total),
+			exchange_rate: invoice.conversion_rate});
 	},
 
 	company(frm) {

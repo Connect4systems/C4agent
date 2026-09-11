@@ -39,7 +39,7 @@ SHIPMENT_WORKFLOW_ACTIONS = (
 	"Cancel Shipment",
 )
 
-EXPENSE_WORKFLOW_STATES = ("Draft", "Pending Verification", "Approved", "Allocated", "Cancelled")
+EXPENSE_WORKFLOW_STATES = ("Draft", "Pending Verification", "Approved", "Partly Paid", "Paid", "Allocated", "Cancelled")
 EXPENSE_WORKFLOW_ACTIONS = (
 	"Submit for Verification",
 	"Approve Expense",
@@ -116,6 +116,8 @@ def setup_c4agent():
 	setup_import_shipment_workflow()
 	seed_import_expense_types()
 	setup_import_expense_workflow()
+	frappe.db.sql("""update `tabImport Expense` set expense_status=payment_status
+		where docstatus=1 and payment_status in ('Partly Paid', 'Paid')""")
 	setup_customs_declaration_workflow()
 	setup_sinosure_workflow()
 	repair_c4agent_workspace()
@@ -441,6 +443,8 @@ def setup_import_expense_workflow():
 			{"state": "Draft", "doc_status": "0", "allow_edit": "Finance User"},
 			{"state": "Pending Verification", "doc_status": "0", "allow_edit": "Finance User"},
 			{"state": "Approved", "doc_status": "1", "allow_edit": "Finance Manager"},
+			{"state": "Partly Paid", "doc_status": "1", "allow_edit": "Finance Manager"},
+			{"state": "Paid", "doc_status": "1", "allow_edit": "Finance Manager"},
 			{"state": "Allocated", "doc_status": "1", "allow_edit": "Finance Manager"},
 			{"state": "Cancelled", "doc_status": "2", "allow_edit": "Finance Manager"},
 		],

@@ -13,6 +13,7 @@ class ImportExpense(Document):
 	"""Operational cost attribution linked to standard ERPNext accounting records."""
 
 	def before_validate(self):
+		self.fetch_supplier_invoice_amount()
 		self.apply_expense_type_defaults()
 		self.apply_accounting_defaults()
 		self.set_currency_values()
@@ -20,6 +21,19 @@ class ImportExpense(Document):
 			self.total_paid = 0
 			self.outstanding_amount = self.amount
 			self.payment_status = "Unpaid"
+
+	def fetch_supplier_invoice_amount(self):
+		if self.docstatus != 0 or not self.supplier_invoice:
+			return
+		previous = self.get_doc_before_save()
+		if previous and previous.supplier_invoice == self.supplier_invoice:
+			return
+		invoice = frappe.get_doc("Purchase Invoice", self.supplier_invoice)
+		invoice.check_permission("read")
+		self.supplier = invoice.supplier
+		self.currency = invoice.currency
+		self.amount = invoice.grand_total if invoice.disable_rounded_total else invoice.rounded_total or invoice.grand_total
+		self.exchange_rate = invoice.conversion_rate
 
 	def validate(self):
 		self.validate_shipment()

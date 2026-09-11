@@ -40,7 +40,7 @@ def rate(currency, company_currency, date):
 def approved_expense(name):
 	expense = frappe.get_doc('Import Expense', name)
 	expense.check_permission('write')
-	if expense.docstatus != 1 or expense.expense_status not in ('Approved', 'Allocated'):
+	if expense.docstatus != 1 or expense.expense_status not in ('Approved', 'Allocated', 'Partly Paid', 'Paid'):
 		frappe.throw('Only approved expenses can be paid')
 	return expense
 
@@ -185,7 +185,8 @@ def update_payment_summary(doc, method=None):
 	expense = frappe.get_doc('Import Expense', name)
 	paid, outstanding = payment_totals(expense)
 	frappe.db.set_value('Import Expense', name, dict(total_paid=paid, outstanding_amount=outstanding,
-		payment_status='Paid' if outstanding == 0 else 'Partly Paid' if paid else 'Unpaid'), update_modified=False)
+		payment_status='Paid' if outstanding == 0 else 'Partly Paid' if paid else 'Unpaid',
+		expense_status='Paid' if outstanding == 0 else 'Partly Paid' if paid else 'Allocated' if getattr(expense, 'landed_cost_allocated', 0) else 'Approved'), update_modified=False)
 
 
 @frappe.whitelist()

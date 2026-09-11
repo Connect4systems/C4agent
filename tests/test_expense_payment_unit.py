@@ -98,6 +98,7 @@ class PaymentTests(unittest.TestCase):
             self.service.update_payment_summary(doc)
             values=self.frappe.db.set_value.call_args.args[2]
             self.assertEqual(values['payment_status'],status)
+            self.assertEqual(values['expense_status'], status if status != 'Unpaid' else 'Approved')
             self.assertEqual(values['outstanding_amount'],outstanding)
 
     def test_invoice_balance_caps_default_payment_in_expense_currency(self):
