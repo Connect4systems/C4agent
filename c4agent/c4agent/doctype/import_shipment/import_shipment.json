@@ -1,27 +1,29 @@
 {
  "actions": [],
- "allow_rename": 0,
  "autoname": "field:shipment_id",
- "creation": "2026-08-31 00:00:00.000000",
+ "creation": "2026-08-31 00:00:00",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
- "is_submittable": 0,
  "field_order": [
   "shipment_id",
   "shipment_title",
-  "general_section",
+  "column_break_qvuv",
   "company",
+  "container_count",
+  "general_section",
   "supplier",
   "purchase_order",
+  "column_break_ijse",
   "supplier_currency",
   "company_currency",
   "commercial_section",
   "commercial_invoice_no",
-  "commercial_invoice_date",
   "currency",
-  "supplier_invoice_amount",
   "exchange_rate",
+  "column_break_nspq",
+  "commercial_invoice_date",
+  "supplier_invoice_amount",
   "sinosure_section",
   "sinosure_coverage",
   "sinosure_exposure_amount",
@@ -29,6 +31,7 @@
   "acid_section",
   "acid_number",
   "acid_issue_date",
+  "column_break_rjsr",
   "nafeza_reference",
   "cargo_x_reference",
   "shipping_section",
@@ -40,6 +43,7 @@
   "port_of_loading",
   "port_of_discharge",
   "final_destination",
+  "column_break_jlyz",
   "etd",
   "eta",
   "actual_departure_date",
@@ -52,15 +56,15 @@
   "items",
   "summary_section",
   "shipment_status",
-  "container_count",
-  "total_packages",
-  "total_gross_weight",
-  "total_cbm",
   "po_value",
   "supplier_invoice_value",
   "total_import_expenses",
   "total_landed_cost",
   "purchase_receipt_value",
+  "column_break_ibdt",
+  "total_cbm",
+  "total_gross_weight",
+  "total_packages",
   "closing_section",
   "closed_on",
   "closed_by",
@@ -71,11 +75,12 @@
   {
    "fieldname": "shipment_id",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Shipment ID",
    "reqd": 1,
-   "unique": 1,
-   "in_standard_filter": 1,
-   "set_only_once": 1
+   "set_only_once": 1,
+   "unique": 1
   },
   {
    "fieldname": "shipment_title",
@@ -91,24 +96,26 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Company",
-   "reqd": 1,
-   "options": "Company"
+   "options": "Company",
+   "reqd": 1
   },
   {
    "fieldname": "supplier",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Supplier",
-   "reqd": 1,
-   "options": "Supplier"
+   "options": "Supplier",
+   "reqd": 1
   },
   {
    "fieldname": "purchase_order",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Purchase Order",
-   "reqd": 1,
    "options": "Purchase Order",
-   "get_depends_on": "eval: doc.supplier && doc.company"
+   "reqd": 1
   },
   {
    "fieldname": "supplier_currency",
@@ -118,11 +125,11 @@
    "read_only": 1
   },
   {
+   "fetch_from": "company.default_currency",
    "fieldname": "company_currency",
    "fieldtype": "Link",
    "label": "Company Currency",
    "options": "Currency",
-   "fetch_from": "company.default_currency",
    "read_only": 1
   },
   {
@@ -141,12 +148,12 @@
    "label": "Commercial Invoice Date"
   },
   {
+   "fetch_from": "purchase_order.currency",
+   "fetch_if_empty": 1,
    "fieldname": "currency",
    "fieldtype": "Link",
    "label": "Currency",
-   "options": "Currency",
-   "fetch_from": "purchase_order.currency",
-   "fetch_if_empty": 1
+   "options": "Currency"
   },
   {
    "fieldname": "supplier_invoice_amount",
@@ -158,7 +165,7 @@
    "fieldname": "exchange_rate",
    "fieldtype": "Float",
    "label": "Exchange Rate",
-   "precision": 6
+   "precision": "6"
   },
   {
    "fieldname": "sinosure_section",
@@ -249,11 +256,11 @@
    "label": "Port of Discharge"
   },
   {
+   "fetch_from": "purchase_order.set_warehouse",
    "fieldname": "final_destination",
    "fieldtype": "Link",
    "label": "Final Destination",
    "options": "Warehouse",
-   "fetch_from": "purchase_order.set_warehouse",
    "read_only": 1
   },
   {
@@ -317,37 +324,33 @@
    "fieldname": "shipment_status",
    "fieldtype": "Select",
    "label": "Shipment Status",
-   "reqd": 1,
    "options": "Draft\nOrdered\nBooked\nIn Transit\nArrived\nUnder Customs Clearance\nCleared\nReceived\nClosed\nCancelled",
-   "read_only": 1
+   "read_only": 1,
+   "reqd": 1
   },
   {
+   "default": "0",
    "fieldname": "container_count",
    "fieldtype": "Int",
    "label": "No of Containers",
-   "read_only": 0,
-   "non_negative": 1,
-   "default": "0"
+   "non_negative": 1
   },
   {
    "fieldname": "total_packages",
    "fieldtype": "Int",
-   "label": "Total Packages",
-   "read_only": 0
+   "label": "Total Packages"
   },
   {
    "fieldname": "total_gross_weight",
    "fieldtype": "Float",
    "label": "Total Gross Weight (kg)",
-   "precision": 2,
-   "read_only": 0
+   "precision": "2"
   },
   {
    "fieldname": "total_cbm",
    "fieldtype": "Float",
    "label": "Total CBM",
-   "precision": 2,
-   "read_only": 0
+   "precision": "2"
   },
   {
    "fieldname": "po_value",
@@ -407,30 +410,51 @@
    "fieldtype": "Small Text",
    "label": "Last Reopen Reason",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_qvuv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ijse",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_nspq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_rjsr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_jlyz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ibdt",
+   "fieldtype": "Column Break"
   }
  ],
  "links": [],
- "modified": "2026-08-31 00:00:00.000000",
+ "modified": "2026-09-11 23:37:12.886887",
  "modified_by": "Administrator",
  "module": "C4Agent",
  "name": "Import Shipment",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
    "create": 1,
-   "delete": 0,
    "email": 1,
    "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
    "role": "Import User",
-   "share": 0,
    "write": 1
   },
   {
-   "amend": 0,
-   "cancel": 0,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -440,11 +464,9 @@
    "report": 1,
    "role": "Import Manager",
    "share": 1,
-   "submit": 0,
    "write": 1
   },
   {
-   "amend": 0,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -454,11 +476,10 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
-   "submit": 0,
    "write": 1
   }
  ],
- "quick_entry": 0,
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
