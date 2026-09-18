@@ -51,7 +51,10 @@ frappe.ui.form.on("Import Shipment", {
 });
 
 function collect_booking_details(frm) {
-	return new Promise((resolve) => {
+	// The standard workflow call has an outdated document snapshot. This promise
+	// intentionally remains pending while the server endpoint saves and applies
+	// the same workflow action with the dialog values.
+	return new Promise(() => {
 		const dialog = new frappe.ui.Dialog({
 			title: __("Confirm Booking"),
 			fields: [
@@ -70,9 +73,18 @@ function collect_booking_details(frm) {
 					frappe.msgprint(__("ETA cannot be before ETD."));
 					return;
 				}
-				await frm.set_value(values);
-				dialog.hide();
-				resolve();
+				dialog.get_primary_btn().prop("disabled", true);
+				try {
+					await frappe.call({
+						method: "c4agent.c4agent.services.shipment.confirm_booking",
+						args: { shipment: frm.doc.name, ...values },
+						freeze: true,
+					});
+					dialog.hide();
+					await frm.reload_doc();
+				} finally {
+					dialog.get_primary_btn().prop("disabled", false);
+				}
 			},
 		});
 		dialog.show();

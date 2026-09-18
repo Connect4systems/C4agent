@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.mapper import get_mapped_doc
+from frappe.model.workflow import apply_workflow
 
 
 @frappe.whitelist()
@@ -61,6 +62,27 @@ def create_import_shipment_from_po(po_name):
 	Backward-compatible API returning an unsaved Import Shipment.
 	"""
 	return make_import_shipment(po_name)
+
+
+@frappe.whitelist()
+def confirm_booking(shipment, shipping_line, bill_of_lading, etd, eta):
+	"""Save booking details and transition an ordered shipment to Booked."""
+	doc = frappe.get_doc("Import Shipment", shipment)
+	doc.check_permission("write")
+	if doc.shipment_status != "Ordered":
+		frappe.throw("Only an Ordered shipment can be confirmed as booked")
+	if not all((shipping_line, bill_of_lading, etd, eta)):
+		frappe.throw("Shipping Line, Bill of Lading, ETD, and ETA are required")
+	if eta < etd:
+		frappe.throw("ETA cannot be before ETD")
+	doc.update({
+		"shipping_line": shipping_line,
+		"bill_of_lading": bill_of_lading,
+		"etd": etd,
+		"eta": eta,
+	})
+	doc.save()
+	return apply_workflow(doc, "Confirm Booking")
 
 
 @frappe.whitelist()
