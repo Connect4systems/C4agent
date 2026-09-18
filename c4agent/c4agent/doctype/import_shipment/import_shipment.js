@@ -64,6 +64,8 @@ function collect_booking_details(frm) {
 					get_query: () => ({ filters: { disabled: 0 } }),
 				},
 				{ fieldname: "bill_of_lading", label: __("Bill of Lading"), fieldtype: "Data", reqd: 1, default: frm.doc.bill_of_lading },
+				{ fieldname: "port_of_loading", label: __("Port of Loading"), fieldtype: "Data", reqd: 1, default: frm.doc.port_of_loading },
+				{ fieldname: "port_of_discharge", label: __("Port of Discharge"), fieldtype: "Data", reqd: 1, default: frm.doc.port_of_discharge },
 				{ fieldname: "etd", label: __("ETD (Expected Departure Date)"), fieldtype: "Date", reqd: 1, default: frm.doc.etd },
 				{ fieldname: "eta", label: __("ETA (Expected Arrival Date)"), fieldtype: "Date", reqd: 1, default: frm.doc.eta },
 			],
