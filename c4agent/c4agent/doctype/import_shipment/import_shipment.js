@@ -12,6 +12,9 @@ frappe.ui.form.on("Import Shipment", {
 		if (frm.selected_workflow_action === "Confirm Booking") return collect_booking_details(frm);
 		if (frm.selected_workflow_action === "Confirm Departure") return collect_departure_details(frm);
 		if (frm.selected_workflow_action === "Confirm Arrival") return collect_arrival_details(frm);
+		if (["Confirm Customs Release", "Release Shipment"].includes(frm.selected_workflow_action)) {
+			return collect_customs_release_details(frm);
+		}
 	},
 	refresh(frm) {
 		frm.set_query("purchase_order", () => ({ filters: { docstatus: 1, company: frm.doc.company, supplier: frm.doc.supplier } }));
@@ -150,6 +153,38 @@ function collect_arrival_details(frm) {
 				try {
 					await frappe.call({
 						method: "c4agent.c4agent.services.shipment.confirm_arrival",
+						args: { shipment: frm.doc.name, ...values },
+						freeze: true,
+					});
+					dialog.hide();
+					await frm.reload_doc();
+				} finally {
+					dialog.get_primary_btn().prop("disabled", false);
+				}
+			},
+		});
+		dialog.show();
+		frappe.dom.unfreeze();
+	});
+}
+
+function collect_customs_release_details(frm) {
+	return new Promise(() => {
+		const dialog = new frappe.ui.Dialog({
+			title: __("Confirm Customs Release"),
+			fields: [
+				{
+					fieldname: "customs_clearance_date", label: __("Customs Clearance Date"),
+					fieldtype: "Date", reqd: 1,
+					default: frm.doc.customs_clearance_date || frappe.datetime.get_today(),
+				},
+			],
+			primary_action_label: __("Confirm Customs Release"),
+			primary_action: async (values) => {
+				dialog.get_primary_btn().prop("disabled", true);
+				try {
+					await frappe.call({
+						method: "c4agent.c4agent.services.shipment.confirm_customs_release",
 						args: { shipment: frm.doc.name, ...values },
 						freeze: true,
 					});

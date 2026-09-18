@@ -117,6 +117,31 @@ def confirm_arrival(shipment, actual_arrival_date):
 
 
 @frappe.whitelist()
+def confirm_customs_release(shipment, customs_clearance_date):
+	"""Save the clearance date and release the shipment through its active workflow."""
+	doc = frappe.get_doc("Import Shipment", shipment)
+	doc.check_permission("write")
+	if not {"Customs Manager", "System Manager"}.intersection(frappe.get_roles()):
+		frappe.throw("Only a Customs Manager can confirm customs release", frappe.PermissionError)
+	if not customs_clearance_date:
+		frappe.throw("Customs Clearance Date is required")
+	if doc.shipment_status == "Duties Assessed":
+		doc.customs_clearance_date = customs_clearance_date
+		doc.save()
+		return apply_workflow(doc, "Release Shipment")
+	if doc.shipment_status == "Under Customs Clearance":
+		# Existing sites can retain the former direct release transition until
+		# migration installs the detailed clearance workflow.
+		frappe.db.set_value(
+			"Import Shipment", doc.name,
+			{"customs_clearance_date": customs_clearance_date, "shipment_status": "Cleared"},
+		)
+		doc.add_comment("Comment", "Customs release confirmed")
+		return frappe.get_doc("Import Shipment", doc.name)
+	frappe.throw("Only a shipment ready for customs release can be cleared")
+
+
+@frappe.whitelist()
 def close_import_shipment(shipment, override_reason=None):
 	doc = frappe.get_doc("Import Shipment", shipment)
 	if not ({"Import Manager", "Finance Manager", "System Manager"} & set(frappe.get_roles())):
