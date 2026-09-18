@@ -76,6 +76,9 @@ function collect_booking_details(frm) {
 			},
 		});
 		dialog.show();
+		// Frappe freezes the form before `before_workflow_action` completes.
+		// Release that overlay so this required dialog can receive input.
+		frappe.dom.unfreeze();
 	});
 }
 
