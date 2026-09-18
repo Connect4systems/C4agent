@@ -8,6 +8,10 @@ frappe.ui.form.on("Import Shipment", {
 			: null;
 		await frm.set_value("company_currency", result?.message?.default_currency || "");
 	},
+	before_workflow_action(frm) {
+		if (frm.selected_workflow_action !== "Confirm Booking") return;
+		return collect_booking_details(frm);
+	},
 	refresh(frm) {
 		frm.set_query("purchase_order", () => ({ filters: { docstatus: 1, company: frm.doc.company, supplier: frm.doc.supplier } }));
 		frm.set_query("sinosure_coverage", () => ({ filters: { company: frm.doc.company, supplier: frm.doc.supplier, coverage_status: "Active" } }));
@@ -45,6 +49,35 @@ frappe.ui.form.on("Import Shipment", {
 		}
 	},
 });
+
+function collect_booking_details(frm) {
+	return new Promise((resolve) => {
+		const dialog = new frappe.ui.Dialog({
+			title: __("Confirm Booking"),
+			fields: [
+				{
+					fieldname: "shipping_line", label: __("Shipping Line"), fieldtype: "Link",
+					options: "Shipping Line", reqd: 1, default: frm.doc.shipping_line,
+					get_query: () => ({ filters: { disabled: 0 } }),
+				},
+				{ fieldname: "bill_of_lading", label: __("Bill of Lading"), fieldtype: "Data", reqd: 1, default: frm.doc.bill_of_lading },
+				{ fieldname: "etd", label: __("ETD (Expected Departure Date)"), fieldtype: "Date", reqd: 1, default: frm.doc.etd },
+				{ fieldname: "eta", label: __("ETA (Expected Arrival Date)"), fieldtype: "Date", reqd: 1, default: frm.doc.eta },
+			],
+			primary_action_label: __("Confirm Booking"),
+			primary_action: async (values) => {
+				if (values.eta < values.etd) {
+					frappe.msgprint(__("ETA cannot be before ETD."));
+					return;
+				}
+				await frm.set_value(values);
+				dialog.hide();
+				resolve();
+			},
+		});
+		dialog.show();
+	});
+}
 
 async function update_commercial_exchange_rate(frm) {
 	const {currency, company_currency, commercial_invoice_date} = frm.doc;
