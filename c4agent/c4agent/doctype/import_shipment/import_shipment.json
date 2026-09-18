@@ -59,6 +59,8 @@
   "po_value",
   "supplier_invoice_value",
   "total_import_expenses",
+  "total_customs_declaration",
+  "total_expenses",
   "total_landed_cost",
   "purchase_receipt_value",
   "column_break_ibdt",
@@ -368,6 +370,18 @@
    "fieldname": "total_import_expenses",
    "fieldtype": "Currency",
    "label": "Total Import Expenses",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_customs_declaration",
+   "fieldtype": "Currency",
+   "label": "Total Customs Declaration",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_expenses",
+   "fieldtype": "Currency",
+   "label": "Total Expenses",
    "read_only": 1
   },
   {

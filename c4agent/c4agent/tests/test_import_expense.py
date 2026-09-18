@@ -25,6 +25,12 @@ class TestImportExpense(FrappeTestCase):
 		self.supplier = self.get_or_create_supplier()
 		self.purchase_order = self.create_purchase_order()
 		self.shipment = self.create_shipment()
+		self.import_expense_type = self.create_expense_type(
+			"_Test C4agent Local Expense", "Import Expenses", include_in_landed_cost=1,
+		)
+		self.customs_expense_type = self.create_expense_type(
+			"_Test C4agent Customs Expense", "Customs Declaration", is_recoverable_tax=1,
+		)
 
 	def get_or_create_supplier(self):
 		name = "_Test C4agent Import Supplier"
@@ -82,13 +88,29 @@ class TestImportExpense(FrappeTestCase):
 			}
 		).insert()
 
-	def make_expense(self, expense_type="Ocean Freight", **values):
+	def create_expense_type(self, name, category, include_in_landed_cost=0, is_recoverable_tax=0):
+		if frappe.db.exists("Import Expense Type", name):
+			return name
+		return frappe.get_doc({
+			"doctype": "Import Expense Type",
+			"expense_type_name": name,
+			"type": category,
+			"include_in_landed_cost": include_in_landed_cost,
+			"is_recoverable_tax": is_recoverable_tax,
+			"allocation_basis": "Amount",
+			"company_accounts": [{
+				"company": self.company,
+				"default_expense_account": self.account,
+			}],
+		}).insert().name
+
+	def make_expense(self, expense_type=None, **values):
 		data = {
 			"doctype": "Import Expense",
 			"company": self.company,
 			"posting_date": date.today(),
 			"import_shipment": self.shipment.name,
-			"expense_type": expense_type,
+			"expense_type": expense_type or self.import_expense_type,
 			"currency": self.foreign_currency,
 			"exchange_rate": 50,
 			"amount": 100,
@@ -105,12 +127,12 @@ class TestImportExpense(FrappeTestCase):
 		self.assertEqual(expense.allocation_basis, "Amount")
 
 	def test_recoverable_import_vat_excluded_by_default(self):
-		expense = self.make_expense(expense_type="Import VAT").insert()
+		expense = self.make_expense(expense_type=self.customs_expense_type).insert()
 
 		self.assertEqual(expense.include_in_landed_cost, 0)
 
 	def test_recoverable_tax_override_requires_reason(self):
-		expense = self.make_expense(expense_type="Import VAT").insert()
+		expense = self.make_expense(expense_type=self.customs_expense_type).insert()
 		expense.include_in_landed_cost = 1
 
 		with self.assertRaises(frappe.ValidationError):
@@ -130,10 +152,7 @@ class TestImportExpense(FrappeTestCase):
 
 
 class TestImportExpenseSetup(FrappeTestCase):
-	def test_seeded_types_and_workflow_exist(self):
-		for expense_type in ("Ocean Freight", "Customs Duty", "Import VAT", "Port Charges"):
-			self.assertTrue(frappe.db.exists("Import Expense Type", expense_type))
-
+	def test_workflow_exists_without_seeded_expense_types(self):
 		self.assertTrue(
 			frappe.db.exists(
 				"Workflow",

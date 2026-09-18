@@ -58,27 +58,6 @@ EXPENSE_WORKFLOW_ACTIONS = (
 SINOSURE_WORKFLOW_STATES = ("Draft", "Pending Approval", "Approved", "Active", "Expired", "Closed", "Rejected")
 SINOSURE_WORKFLOW_ACTIONS = ("Request Approval", "Approve", "Reject", "Activate", "Expire", "Close")
 
-DEFAULT_IMPORT_EXPENSE_TYPES = (
-	("Ocean Freight", 1, 0, "Amount"),
-	("Customs Duty", 1, 0, "Amount"),
-	("Import VAT", 0, 1, "Amount"),
-	("Import Tax", 0, 0, "Amount"),
-	("Customs Broker", 1, 0, "Amount"),
-	("Port Charges", 1, 0, "Weight"),
-	("Nafeza Fees", 1, 0, "Amount"),
-	("Inspection", 1, 0, "Amount"),
-	("Quarantine", 1, 0, "Amount"),
-	("Storage", 1, 0, "Amount"),
-	("Demurrage", 0, 0, "Amount"),
-	("Detention", 0, 0, "Amount"),
-	("Transportation", 1, 0, "Weight"),
-	("Marine Insurance", 1, 0, "Amount"),
-	("Bank Charges", 0, 0, "Amount"),
-	("Sinosure Fee", 0, 0, "Amount"),
-	("Documentation", 1, 0, "Amount"),
-	("Other Import Expense", 0, 0, "Manual"),
-)
-
 C4AGENT_WORKSPACE_CONTENT = [
 	{"id": "c4agent-header", "type": "header", "data": {"text": '<span class="h4"><b>C4agent Import Management</b></span>', "col": 12}},
 	{"id": "c4agent-operations", "type": "card", "data": {"card_name": "Operations", "col": 4}},
@@ -112,7 +91,6 @@ def setup_c4agent():
 	from c4agent.c4agent.services.expense_payment import setup_payment_fields
 	setup_payment_fields()
 	setup_import_shipment_workflow()
-	seed_import_expense_types()
 	setup_import_expense_workflow()
 	frappe.db.sql("""update `tabImport Expense` set expense_status=payment_status
 		where docstatus=1 and payment_status in ('Partly Paid', 'Paid')""")
@@ -406,27 +384,6 @@ def setup_import_shipment_workflow():
 		workflow.insert(ignore_permissions=True)
 	else:
 		workflow.save(ignore_permissions=True)
-
-
-def seed_import_expense_types():
-	"""Create editable policy defaults without overwriting finance changes."""
-	if not frappe.db.exists("DocType", "Import Expense Type"):
-		return
-
-	for name, include_in_landed_cost, is_recoverable_tax, allocation_basis in (
-		DEFAULT_IMPORT_EXPENSE_TYPES
-	):
-		if frappe.db.exists("Import Expense Type", name):
-			continue
-		frappe.get_doc(
-			{
-				"doctype": "Import Expense Type",
-				"expense_type_name": name,
-				"include_in_landed_cost": include_in_landed_cost,
-				"is_recoverable_tax": is_recoverable_tax,
-				"allocation_basis": allocation_basis,
-			}
-		).insert(ignore_permissions=True)
 
 
 def setup_import_expense_workflow():

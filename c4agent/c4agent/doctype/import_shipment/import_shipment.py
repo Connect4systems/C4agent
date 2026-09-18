@@ -286,15 +286,13 @@ class ImportShipment(Document):
 	
 	def refresh_summary_totals(self):
 		"""Calculate summary totals from linked records"""
-		# Total import expenses (company currency)
 		self.total_import_expenses = 0
+		self.total_customs_declaration = 0
+		self.total_expenses = 0
 		if frappe.db.exists("DocType", "Import Expense"):
-			expenses = frappe.get_all(
-				"Import Expense",
-				filters={"import_shipment": self.name, "docstatus": 1},
-				fields=["SUM(base_amount) as total"]
-			)
-			self.total_import_expenses = expenses[0].total if expenses else 0
+			from c4agent.c4agent.doctype.import_expense.import_expense import get_expense_totals
+			for fieldname, value in get_expense_totals(self.name).items():
+				self.set(fieldname, value)
 		
 		# Fetch PO value
 		if self.purchase_order:

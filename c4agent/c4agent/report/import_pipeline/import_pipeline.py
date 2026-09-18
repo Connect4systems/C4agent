@@ -23,6 +23,8 @@ def execute(filters=None):
 		{"label":"ACID","fieldname":"acid_number","fieldtype":"Data","width":150},
 		{"label":"PO Value","fieldname":"po_value","fieldtype":"Currency","width":120},
 		{"label":"Import Expenses","fieldname":"total_import_expenses","fieldtype":"Currency","width":130},
+		{"label":"Customs Declaration","fieldname":"total_customs_declaration","fieldtype":"Currency","width":145},
+		{"label":"Total Expenses","fieldname":"total_expenses","fieldtype":"Currency","width":130},
 		{"label":"Landed Cost","fieldname":"total_landed_cost","fieldtype":"Currency","width":120},
 		{"label":"Indicator","fieldname":"indicator","fieldtype":"Data","width":120},
 	]

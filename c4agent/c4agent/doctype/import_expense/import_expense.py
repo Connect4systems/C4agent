@@ -225,19 +225,33 @@ class ImportExpense(Document):
 
 def refresh_import_expense_summaries(shipment_name, exclude_expense=None):
 	"""Refresh shipment base-currency expense summaries."""
-	filters = {"import_shipment": shipment_name, "docstatus": 1}
-	if exclude_expense:
-		filters["name"] = ("!=", exclude_expense)
-
-	shipment_expenses = frappe.get_all(
-		"Import Expense",
-		filters=filters,
-		fields=["base_amount"],
-	)
+	totals = get_expense_totals(shipment_name, exclude_expense)
 	frappe.db.set_value(
 		"Import Shipment",
 		shipment_name,
-		"total_import_expenses",
-		sum(row.base_amount or 0 for row in shipment_expenses),
+		totals,
 		update_modified=False,
 	)
+
+
+def get_expense_totals(shipment_name, exclude_expense=None):
+	"""Return submitted expense totals grouped by the manually selected type category."""
+	conditions = "e.import_shipment=%s and e.docstatus=1"
+	values = [shipment_name]
+	if exclude_expense:
+		conditions += " and e.name!=%s"
+		values.append(exclude_expense)
+	row = frappe.db.sql(
+		f"""select
+			coalesce(sum(case when coalesce(t.type, 'Import Expenses')='Import Expenses'
+				then e.base_amount else 0 end), 0) as total_import_expenses,
+			coalesce(sum(case when t.type='Customs Declaration'
+				then e.base_amount else 0 end), 0) as total_customs_declaration
+			from `tabImport Expense` e
+			left join `tabImport Expense Type` t on t.name=e.expense_type
+			where {conditions}""",
+		values,
+		as_dict=True,
+	)[0]
+	row.total_expenses = row.total_import_expenses + row.total_customs_declaration
+	return row

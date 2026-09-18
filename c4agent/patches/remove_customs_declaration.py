@@ -70,7 +70,7 @@ def execute():
 		if frappe.db.exists("Workflow Action Master", action):
 			frappe.delete_doc("Workflow Action Master", action, force=True, ignore_permissions=True)
 	frappe.db.sql("""update `tabImport Expense Type`
-		set type='Customs Clearance' where type='Customs Declaration'""")
+		set type='Customs Declaration' where type='Customs Clearance'""")
 	for doctype in ("Customs Accounting Reference", "Customs Declaration"):
 		if frappe.db.exists("DocType", doctype):
 			frappe.delete_doc("DocType", doctype, force=True, ignore_permissions=True)
