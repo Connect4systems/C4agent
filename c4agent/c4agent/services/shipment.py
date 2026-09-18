@@ -103,6 +103,20 @@ def confirm_departure(shipment, acid_number, actual_departure_date):
 
 
 @frappe.whitelist()
+def confirm_arrival(shipment, actual_arrival_date):
+	"""Save the actual arrival date and transition an in-transit shipment to Arrived."""
+	doc = frappe.get_doc("Import Shipment", shipment)
+	doc.check_permission("write")
+	if doc.shipment_status != "In Transit":
+		frappe.throw("Only an In Transit shipment can have its arrival confirmed")
+	if not actual_arrival_date:
+		frappe.throw("Actual Arrival Date is required")
+	doc.actual_arrival_date = actual_arrival_date
+	doc.save()
+	return apply_workflow(doc, "Confirm Arrival")
+
+
+@frappe.whitelist()
 def close_import_shipment(shipment, override_reason=None):
 	doc = frappe.get_doc("Import Shipment", shipment)
 	if not ({"Import Manager", "Finance Manager", "System Manager"} & set(frappe.get_roles())):

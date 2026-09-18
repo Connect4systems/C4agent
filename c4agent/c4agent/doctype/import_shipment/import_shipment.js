@@ -11,6 +11,7 @@ frappe.ui.form.on("Import Shipment", {
 	before_workflow_action(frm) {
 		if (frm.selected_workflow_action === "Confirm Booking") return collect_booking_details(frm);
 		if (frm.selected_workflow_action === "Confirm Departure") return collect_departure_details(frm);
+		if (frm.selected_workflow_action === "Confirm Arrival") return collect_arrival_details(frm);
 	},
 	refresh(frm) {
 		frm.set_query("purchase_order", () => ({ filters: { docstatus: 1, company: frm.doc.company, supplier: frm.doc.supplier } }));
@@ -118,6 +119,37 @@ function collect_departure_details(frm) {
 				try {
 					await frappe.call({
 						method: "c4agent.c4agent.services.shipment.confirm_departure",
+						args: { shipment: frm.doc.name, ...values },
+						freeze: true,
+					});
+					dialog.hide();
+					await frm.reload_doc();
+				} finally {
+					dialog.get_primary_btn().prop("disabled", false);
+				}
+			},
+		});
+		dialog.show();
+		frappe.dom.unfreeze();
+	});
+}
+
+function collect_arrival_details(frm) {
+	return new Promise(() => {
+		const dialog = new frappe.ui.Dialog({
+			title: __("Confirm Arrival"),
+			fields: [
+				{
+					fieldname: "actual_arrival_date", label: __("Actual Arrival Date"),
+					fieldtype: "Date", reqd: 1, default: frm.doc.actual_arrival_date || frappe.datetime.get_today(),
+				},
+			],
+			primary_action_label: __("Confirm Arrival"),
+			primary_action: async (values) => {
+				dialog.get_primary_btn().prop("disabled", true);
+				try {
+					await frappe.call({
+						method: "c4agent.c4agent.services.shipment.confirm_arrival",
 						args: { shipment: frm.doc.name, ...values },
 						freeze: true,
 					});
