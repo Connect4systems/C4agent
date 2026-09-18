@@ -158,7 +158,11 @@ class ImportShipment(Document):
 			"Booked": ["In Transit", "Cancelled"],
 			"In Transit": ["Arrived", "Cancelled"],
 			"Arrived": ["Under Customs Clearance", "Cancelled"],
-			"Under Customs Clearance": ["Cleared", "Cancelled"],
+			"Under Customs Clearance": ["Documents Submitted", "Cancelled"],
+			"Documents Submitted": ["Under Review", "Cancelled"],
+			"Under Review": ["Under Inspection", "Duties Assessed", "Cancelled"],
+			"Under Inspection": ["Duties Assessed", "Cancelled"],
+			"Duties Assessed": ["Cleared", "Cancelled"],
 			"Cleared": ["Received", "Cancelled"],
 			"Received": ["Closed", "Cancelled"],
 		}
@@ -202,27 +206,9 @@ class ImportShipment(Document):
 			if not self.actual_arrival_date:
 				frappe.throw("Actual Arrival Date is required before confirming arrival")
 		
-		elif new_status == "Under Customs Clearance":
-			if not frappe.db.exists("DocType", "Customs Declaration"):
-				frappe.throw("Customs Declaration must be installed before starting customs clearance")
-			customs = frappe.db.get_value(
-				"Customs Declaration",
-				{"import_shipment": self.name},
-				"name"
-			)
-			if not customs:
-				frappe.throw("At least one Customs Declaration is required")
-		
 		elif new_status == "Cleared":
-			if not frappe.db.exists("DocType", "Customs Declaration"):
-				frappe.throw("Customs Declaration must be installed before confirming clearance")
-			customs = frappe.db.get_value(
-				"Customs Declaration",
-				{"import_shipment": self.name, "clearance_status": "Released"},
-				"name"
-			)
-			if not customs:
-				frappe.throw("At least one Customs Declaration must be Released")
+			if not self.customs_clearance_date:
+				frappe.throw("Customs Clearance Date is required before releasing the shipment")
 		
 		elif new_status == "Received":
 			pr = frappe.db.get_value(
@@ -248,10 +234,6 @@ class ImportShipment(Document):
 		for doctype, fieldname in linked_documents:
 			if frappe.db.exists(doctype, {fieldname: self.name, "docstatus": 1}):
 				frappe.throw(f"Cancel submitted {doctype} documents linked to this shipment first")
-		if frappe.db.exists("DocType", "Customs Declaration") and frappe.db.exists(
-			"Customs Declaration", {"import_shipment": self.name, "clearance_status": "Released"}
-		):
-			frappe.throw("Resolve the Released Customs Declaration before cancelling this shipment")
 
 	def validate_basic_closure(self):
 		"""Require physical receipt, customs release, and complete cost allocation."""
@@ -263,15 +245,6 @@ class ImportShipment(Document):
 			{"custom_import_shipment": self.name, "docstatus": 1},
 		):
 			frappe.throw("At least one submitted Purchase Receipt is required before closing")
-
-		if (
-			frappe.db.exists("DocType", "Customs Declaration")
-			and not frappe.db.exists(
-				"Customs Declaration", {"import_shipment": self.name, "clearance_status": "Released"}
-			)
-			and not self.close_override_reason
-		):
-			frappe.throw("A Released Customs Declaration is required before closing")
 
 		if frappe.db.exists("DocType", "Import Expense"):
 			pending = frappe.db.count("Import Expense", {"import_shipment": self.name, "docstatus": 0})

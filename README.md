@@ -7,7 +7,7 @@ C4agent is the import operations layer for ERPNext 15. It manages the complete p
 - Import Shipment, PO mapping, shipment items, manual container counts, documents, lifecycle workflow, closure and controlled reopening
 - Foreign Purchase Invoice validation with ACID, shipping, PO and Sinosure references
 - Purchase Receipt shipment validation and received-quantity summaries
-- Customs Declaration, government costs, accounting references, and clearance workflow
+- Import Shipment customs-clearance workflow; government costs are recorded as Import Expenses
 - Import Expense Types, multi-currency expenses, recoverable VAT policy, approval workflow
 - Standard ERPNext Landed Cost Voucher generation with exact expense traceability and duplicate-allocation protection
 - Sinosure policy, per-shipment exposure, fees, expiry processing, approval workflow, and supplier exposure service

@@ -13,7 +13,6 @@ frappe.ui.form.on("Import Shipment", {
 		frm.set_query("sinosure_coverage", () => ({ filters: { company: frm.doc.company, supplier: frm.doc.supplier, coverage_status: "Active" } }));
 		if (!frm.is_new()) {
 			const actions = [
-				["Customs Declaration", "Customs Declaration", {import_shipment:frm.doc.name, company:frm.doc.company}],
 				["Import Expense", "Import Expense", {import_shipment:frm.doc.name, company:frm.doc.company}],
 				["Sinosure Coverage", "Sinosure Coverage", {import_shipment:frm.doc.name, company:frm.doc.company, supplier:frm.doc.supplier}],
 			];

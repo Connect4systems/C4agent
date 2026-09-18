@@ -27,12 +27,12 @@ def validate_import_shipment(doc, method=None):
 			f"Import Shipment supplier '{shipment.supplier}'"
 		)
 	
-	# Validate customs release
+	# Receiving can only begin once this shipment is cleared.
 	settings = frappe.get_single("C4agent Settings")
-	if settings.require_customs_release_before_receipt and not frappe.db.exists(
-		"Customs Declaration", {"import_shipment": doc.custom_import_shipment, "clearance_status": "Released"}
+	if settings.require_customs_release_before_receipt and shipment.shipment_status not in (
+		"Cleared", "Received", "Closed",
 	):
-		frappe.throw("A Released Customs Declaration is required before receiving this shipment")
+		frappe.throw("Import Shipment must be Cleared before receiving it")
 
 
 def on_submit(doc, method=None):

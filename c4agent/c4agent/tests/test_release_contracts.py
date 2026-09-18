@@ -5,7 +5,7 @@ from frappe.tests.utils import FrappeTestCase
 class TestC4agentReleaseContracts(FrappeTestCase):
 	def test_all_phase_doctypes_are_installed(self):
 		for doctype in (
-			"Import Shipment", "Customs Declaration",
+			"Import Shipment",
 			"Import Expense Type", "Import Expense", "Sinosure Coverage",
 		):
 			self.assertTrue(frappe.db.exists("DocType", doctype), doctype)
@@ -13,13 +13,30 @@ class TestC4agentReleaseContracts(FrappeTestCase):
 	def test_all_operational_workflows_are_active(self):
 		for name, doctype in (
 			("Import Shipment Lifecycle", "Import Shipment"),
-			("Customs Declaration Lifecycle", "Customs Declaration"),
 			("Import Expense Approval", "Import Expense"),
 			("Sinosure Coverage Lifecycle", "Sinosure Coverage"),
 		):
 			self.assertTrue(frappe.db.exists("Workflow", {
 				"workflow_name": name, "document_type": doctype, "is_active": 1,
 			}))
+
+	def test_customs_clearance_is_part_of_the_shipment_workflow(self):
+		workflow = frappe.get_doc("Workflow", "Import Shipment Lifecycle")
+		transitions = {
+			(row.state, row.action, row.next_state, row.allowed)
+			for row in workflow.transitions
+		}
+		self.assertTrue(frappe.db.exists("DocType", "Import Shipment"))
+		self.assertFalse(frappe.db.exists("DocType", "Customs Declaration"))
+		self.assertTrue({
+			("Under Customs Clearance", "Submit Documents", "Documents Submitted", "Customs User"),
+			("Documents Submitted", "Start Review", "Under Review", "Customs User"),
+			("Under Review", "Start Inspection", "Under Inspection", "Customs User"),
+			("Under Review", "Assess Duties", "Duties Assessed", "Customs Manager"),
+			("Under Inspection", "Assess Duties", "Duties Assessed", "Customs Manager"),
+			("Duties Assessed", "Release Shipment", "Cleared", "Customs Manager"),
+		}.issubset(transitions))
+		self.assertFalse(any(row.action in {"Request Payment", "Confirm Payment"} for row in workflow.transitions))
 
 	def test_standard_erpnext_integration_fields_exist(self):
 		for doctype, fieldname in (

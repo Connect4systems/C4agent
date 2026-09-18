@@ -9,3 +9,4 @@ c4agent.patches.remove_import_container
 c4agent.patches.cleanup_retired_container_references
 c4agent.patches.initialize_expense_payment_totals
 c4agent.patches.migrate_expense_company_accounts
+c4agent.patches.remove_customs_declaration

@@ -12,8 +12,8 @@ def make_landed_cost_vouchers(import_shipment):
 	}, fields=["name", "supplier", "posting_date", "grand_total"])
 	if not receipts:
 		frappe.throw("Submit at least one Purchase Receipt for this shipment first")
-	if not frappe.db.exists("Customs Declaration", {"import_shipment": shipment.name, "clearance_status": "Released"}):
-		frappe.msgprint("Customs Declaration is not Released; Finance Manager should review before submitting the voucher", indicator="orange", alert=True)
+	if shipment.shipment_status not in ("Cleared", "Received", "Closed"):
+		frappe.msgprint("Import Shipment is not Cleared; Finance Manager should review before submitting the voucher", indicator="orange", alert=True)
 	expenses = frappe.get_all("Import Expense", filters={
 		"import_shipment": shipment.name, "docstatus": 1, "include_in_landed_cost": 1,
 		"landed_cost_allocated": 0,

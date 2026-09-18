@@ -36,6 +36,9 @@ def execute(filters=None):
 				row.indicator = "Delayed"
 			elif getdate(row.eta) <= getdate(add_days(today, 3)):
 				row.indicator = "Arriving Soon"
-		if row.shipment_status in ("Arrived", "Under Customs Clearance"):
+		if row.shipment_status in (
+			"Arrived", "Under Customs Clearance", "Documents Submitted",
+			"Under Review", "Under Inspection", "Duties Assessed",
+		):
 			row.indicator = "Customs Pending"
 	return columns, data

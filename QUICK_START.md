@@ -121,8 +121,8 @@ Documentation:  3 detailed guides
 
 - **Import User**: View and manage shipments/containers
 - **Import Manager**: Full operational control, status changes
-- **Customs User**: Manage customs declarations  
-- **Customs Manager**: Approve customs releases
+- **Customs User**: Progress shipment customs-clearance actions
+- **Customs Manager**: Assess duties and release shipments
 - **Finance User**: Create import expenses
 - **Finance Manager**: Approve expenses, override rules
 
@@ -193,7 +193,7 @@ Tests cover:
 ## 🔜 What's Coming Next
 
 **Milestone 2: Customs Workflow**
-- Customs Declaration tracking
+- Customs-clearance tracking on Import Shipment
 - ACID/Nafeza management
 - Government fees and taxes
 

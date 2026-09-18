@@ -164,7 +164,7 @@ bench --site {site_name} clear-cache
    - **Expected**: Transition is rejected until Actual Departure Date is set
 
 3. **Customs boundary for Phase 1**
-   - The app must not allow **"Start Customs"** until Milestone 2 installs Customs Declaration
+   - The app moves clearance actions through the Import Shipment workflow
 
 ✅ **Prerequisites enforced correctly**
 
@@ -300,7 +300,7 @@ _______________________________________________________
 ## 🎯 Next Phase (After Testing)
 
 Once testing is complete and passed:
-- Milestone 2: Customs Declaration workflow
+- Milestone 2: Import Shipment customs-clearance workflow
 - Milestone 3: Import Expenses
 - Milestone 4: Landed Cost Voucher integration
 - Milestone 5: Sinosure Coverage

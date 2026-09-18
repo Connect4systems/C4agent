@@ -21,6 +21,10 @@ SHIPMENT_WORKFLOW_STATES = (
 	"In Transit",
 	"Arrived",
 	"Under Customs Clearance",
+	"Documents Submitted",
+	"Under Review",
+	"Under Inspection",
+	"Duties Assessed",
 	"Cleared",
 	"Received",
 	"Closed",
@@ -33,7 +37,11 @@ SHIPMENT_WORKFLOW_ACTIONS = (
 	"Confirm Departure",
 	"Confirm Arrival",
 	"Start Customs",
-	"Confirm Customs Release",
+	"Submit Documents",
+	"Start Review",
+	"Start Inspection",
+	"Assess Duties",
+	"Release Shipment",
 	"Confirm Receipt",
 	"Close Shipment",
 	"Cancel Shipment",
@@ -45,15 +53,6 @@ EXPENSE_WORKFLOW_ACTIONS = (
 	"Approve Expense",
 	"Return to Draft",
 	"Cancel Expense",
-)
-
-CUSTOMS_WORKFLOW_STATES = (
-	"Draft", "Documents Submitted", "Under Review", "Under Inspection",
-	"Duties Assessed", "Payment Pending", "Paid", "Released", "Cancelled",
-)
-CUSTOMS_WORKFLOW_ACTIONS = (
-	"Submit Documents", "Start Review", "Start Inspection", "Assess Duties",
-	"Request Payment", "Confirm Payment", "Release Shipment", "Cancel Declaration",
 )
 
 SINOSURE_WORKFLOW_STATES = ("Draft", "Pending Approval", "Approved", "Active", "Expired", "Closed", "Rejected")
@@ -91,7 +90,6 @@ C4AGENT_WORKSPACE_CONTENT = [
 
 C4AGENT_WORKSPACE_LINKS = {
 	"Import Shipment": ("DocType", "Import Shipment"),
-	"Customs Declaration": ("DocType", "Customs Declaration"),
 	"Import Expense": ("DocType", "Import Expense"),
 	"Sinosure Coverage": ("DocType", "Sinosure Coverage"),
 	"Shipping Line": ("DocType", "Shipping Line"),
@@ -118,7 +116,6 @@ def setup_c4agent():
 	setup_import_expense_workflow()
 	frappe.db.sql("""update `tabImport Expense` set expense_status=payment_status
 		where docstatus=1 and payment_status in ('Partly Paid', 'Paid')""")
-	setup_customs_declaration_workflow()
 	setup_sinosure_workflow()
 	repair_c4agent_workspace()
 
@@ -356,7 +353,11 @@ def setup_import_shipment_workflow():
 			{"state": "Booked", "doc_status": "0", "allow_edit": "Import User"},
 			{"state": "In Transit", "doc_status": "0", "allow_edit": "Import User"},
 			{"state": "Arrived", "doc_status": "0", "allow_edit": "Import User"},
-			{"state": "Under Customs Clearance", "doc_status": "0", "allow_edit": "Import User"},
+			{"state": "Under Customs Clearance", "doc_status": "0", "allow_edit": "Customs User"},
+			{"state": "Documents Submitted", "doc_status": "0", "allow_edit": "Customs User"},
+			{"state": "Under Review", "doc_status": "0", "allow_edit": "Customs User"},
+			{"state": "Under Inspection", "doc_status": "0", "allow_edit": "Customs User"},
+			{"state": "Duties Assessed", "doc_status": "0", "allow_edit": "Customs Manager"},
 			{"state": "Cleared", "doc_status": "0", "allow_edit": "Import Manager"},
 			{"state": "Received", "doc_status": "0", "allow_edit": "Import Manager"},
 			{"state": "Closed", "doc_status": "0", "allow_edit": "Import Manager"},
@@ -374,7 +375,12 @@ def setup_import_shipment_workflow():
 		("In Transit", "Confirm Arrival", "Arrived", "Import Manager"),
 		("Arrived", "Start Customs", "Under Customs Clearance", "Import Manager"),
 		("Arrived", "Start Customs", "Under Customs Clearance", "Customs User"),
-		("Under Customs Clearance", "Confirm Customs Release", "Cleared", "Customs Manager"),
+		("Under Customs Clearance", "Submit Documents", "Documents Submitted", "Customs User"),
+		("Documents Submitted", "Start Review", "Under Review", "Customs User"),
+		("Under Review", "Start Inspection", "Under Inspection", "Customs User"),
+		("Under Review", "Assess Duties", "Duties Assessed", "Customs Manager"),
+		("Under Inspection", "Assess Duties", "Duties Assessed", "Customs Manager"),
+		("Duties Assessed", "Release Shipment", "Cleared", "Customs Manager"),
 		("Cleared", "Confirm Receipt", "Received", "Import Manager"),
 		("Received", "Close Shipment", "Closed", "Import Manager"),
 		("Received", "Close Shipment", "Closed", "Finance Manager"),
@@ -477,39 +483,6 @@ def setup_import_expense_workflow():
 		workflow.insert(ignore_permissions=True)
 	else:
 		workflow.save(ignore_permissions=True)
-
-
-def setup_customs_declaration_workflow():
-	if not frappe.db.exists("DocType", "Customs Declaration"):
-		return
-	ensure_workflow_masters(CUSTOMS_WORKFLOW_STATES, CUSTOMS_WORKFLOW_ACTIONS)
-	workflow_name = "Customs Declaration Lifecycle"
-	workflow = frappe.get_doc("Workflow", workflow_name) if frappe.db.exists("Workflow", workflow_name) else frappe.new_doc("Workflow")
-	workflow.workflow_name = workflow_name
-	workflow.document_type = "Customs Declaration"
-	workflow.workflow_state_field = "clearance_status"
-	workflow.is_active = 1
-	workflow.override_status = 0
-	workflow.send_email_alert = 0
-	workflow.set("states", [
-		{"state": state, "doc_status": "0", "allow_edit": "Customs Manager" if state in ("Paid", "Released", "Cancelled") else "Customs User"}
-		for state in CUSTOMS_WORKFLOW_STATES
-	])
-	transitions = (
-		("Draft", "Submit Documents", "Documents Submitted", "Customs User"),
-		("Documents Submitted", "Start Review", "Under Review", "Customs User"),
-		("Under Review", "Start Inspection", "Under Inspection", "Customs User"),
-		("Under Review", "Assess Duties", "Duties Assessed", "Customs Manager"),
-		("Under Inspection", "Assess Duties", "Duties Assessed", "Customs Manager"),
-		("Duties Assessed", "Request Payment", "Payment Pending", "Customs Manager"),
-		("Payment Pending", "Confirm Payment", "Paid", "Finance Manager"),
-		("Paid", "Release Shipment", "Released", "Customs Manager"),
-	)
-	rows = [{"state": a, "action": b, "next_state": c, "allowed": d, "allow_self_approval": 1} for a, b, c, d in transitions]
-	for state in CUSTOMS_WORKFLOW_STATES[:-2]:
-		rows.append({"state": state, "action": "Cancel Declaration", "next_state": "Cancelled", "allowed": "Customs Manager", "allow_self_approval": 1})
-	workflow.set("transitions", rows)
-	workflow.insert(ignore_permissions=True) if workflow.is_new() else workflow.save(ignore_permissions=True)
 
 
 def setup_sinosure_workflow():

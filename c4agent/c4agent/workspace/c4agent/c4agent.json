@@ -29,19 +29,6 @@
    "workflow_state": null
   },
   {
-   "app": "c4agent",
-   "count": 0,
-   "doctype": "Customs Declaration",
-   "hidden": 0,
-   "label": "Customs Declaration",
-   "link_to": "Customs Declaration",
-   "link_type": "DocType",
-   "link_count": 0,
-   "onboard": 1,
-   "type": "Link",
-   "workflow_state": null
-  },
-  {
    "hidden": 0,
    "label": "Finance",
    "onboard": 0,

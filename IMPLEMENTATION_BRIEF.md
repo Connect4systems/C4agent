@@ -51,7 +51,7 @@ Each import can involve:
 - Vessel
 - Voyage
 - One or more Containers
-- Customs Declaration
+- Customs clearance workflow on Import Shipment
 - Customs Duties
 - Import VAT
 - Import Tax
@@ -82,7 +82,6 @@ Import Shipment
     |
     +-- Import Containers
     +-- Purchase Invoices
-    +-- Customs Declarations
     +-- Import Expenses
     +-- Sinosure Coverage
     +-- Purchase Receipts
@@ -128,7 +127,7 @@ RULE 15: Never post directly to GL Entry or Stock Ledger Entry.
 - Container on Purchase Receipt Item
 
 ### MILESTONE 2: Customs Workflow
-- Customs Declaration
+- Customs-clearance actions on Import Shipment
 - ACID / Nafeza fields
 - Customs workflow
 - Import Shipment Documents

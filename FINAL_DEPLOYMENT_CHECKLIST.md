@@ -206,7 +206,7 @@ Once verified working:
    - Create Purchase Receipt
 
 4. **Proceed to Milestone 2** (When ready):
-   - Customs Declaration workflow
+   - Import Shipment customs-clearance workflow
    - ACID/Nafeza tracking
    - Customs clearance process
 

@@ -49,13 +49,12 @@ Expected: remaining limit is calculated; negative remaining limit requires a Fin
 
 ## 5. Customs
 
-1. Create a Customs Declaration from the shipment.
-2. Enter the declaration number and government costs.
-3. Confirm Total Customs Cost excludes recoverable Import VAT.
-4. Add the submitted Purchase Invoice, Journal Entry, or Payment Entry used for accounting.
-5. Progress through Documents Submitted, Review/Inspection, Duties Assessed, Payment Pending, Paid, and Released.
+1. On the Import Shipment, use **Start Customs**.
+2. Progress through Documents Submitted, Review/Inspection, and Duties Assessed.
+3. Record duties, VAT, Nafeza, inspection, and other government costs as Import Expenses using the appropriate expense type.
+4. Enter Customs Clearance Date, then use **Release Shipment**.
 
-Expected: Paid/Released requires an accounting reference; Released requires a release date and updates the shipment clearance date. The shipment can then move to Cleared.
+Expected: Release Shipment requires Customs Clearance Date and changes the shipment to Cleared.
 
 ## 6. Receipt and import expenses
 

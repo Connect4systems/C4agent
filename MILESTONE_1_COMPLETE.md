@@ -190,7 +190,6 @@ Purchase Order (Truth)
     ↓
 Import Shipment (Operational Master)
     ├── Containers
-    ├── Customs Declarations
     └── Import Expenses
         ↓
         Linked to ↓
@@ -216,7 +215,7 @@ Import Shipment (Operational Master)
 ## What's Next: MILESTONE 2 (Customs Workflow)
 
 Planned features:
-- [ ] Customs Declaration DocType
+- [ ] Customs-clearance actions on Import Shipment
 - [ ] ACID/Nafeza field organization
 - [ ] Customs clearance status workflow
 - [ ] Import Shipment Document (child table for attachments)

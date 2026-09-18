@@ -324,7 +324,7 @@
    "fieldname": "shipment_status",
    "fieldtype": "Select",
    "label": "Shipment Status",
-   "options": "Draft\nOrdered\nBooked\nIn Transit\nArrived\nUnder Customs Clearance\nCleared\nReceived\nClosed\nCancelled",
+   "options": "Draft\nOrdered\nBooked\nIn Transit\nArrived\nUnder Customs Clearance\nDocuments Submitted\nUnder Review\nUnder Inspection\nDuties Assessed\nCleared\nReceived\nClosed\nCancelled",
    "read_only": 1,
    "reqd": 1
   },
@@ -452,6 +452,24 @@
    "read": 1,
    "report": 1,
    "role": "Import User",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Customs User",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Customs Manager",
    "write": 1
   },
   {
