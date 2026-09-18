@@ -102,6 +102,10 @@ function collect_departure_details(frm) {
 			title: __("Confirm Departure"),
 			fields: [
 				{
+					fieldname: "acid_number", label: __("ACID Number"), fieldtype: "Data",
+					reqd: 1, default: frm.doc.acid_number,
+				},
+				{
 					fieldname: "actual_departure_date", label: __("Actual Departure Date"),
 					fieldtype: "Date", reqd: 1, default: frm.doc.actual_departure_date || frappe.datetime.get_today(),
 				},
