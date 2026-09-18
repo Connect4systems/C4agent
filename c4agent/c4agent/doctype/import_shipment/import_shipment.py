@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import now_datetime
+from frappe.utils import getdate, now_datetime
 
 
 class ImportShipment(Document):
@@ -120,9 +120,12 @@ class ImportShipment(Document):
 	
 	def validate_eta_after_etd(self):
 		"""Validate ETA is not before ETD"""
-		if self.etd and self.eta and self.eta < self.etd:
+		if self.etd and self.eta and getdate(self.eta) < getdate(self.etd):
 			frappe.throw("ETA cannot be before ETD")
-		if self.actual_departure_date and self.actual_arrival_date and self.actual_arrival_date < self.actual_departure_date:
+		if (
+			self.actual_departure_date and self.actual_arrival_date
+			and getdate(self.actual_arrival_date) < getdate(self.actual_departure_date)
+		):
 			frappe.throw("Actual Arrival Date cannot be before Actual Departure Date")
 
 	def validate_sinosure_coverage(self):
