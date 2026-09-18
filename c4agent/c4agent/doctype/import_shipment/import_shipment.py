@@ -292,7 +292,8 @@ class ImportShipment(Document):
 		if frappe.db.exists("DocType", "Import Expense"):
 			from c4agent.c4agent.doctype.import_expense.import_expense import get_expense_totals
 			for fieldname, value in get_expense_totals(self.name).items():
-				self.set(fieldname, value)
+				if self.meta.has_field(fieldname):
+					self.set(fieldname, value)
 		
 		# Fetch PO value
 		if self.purchase_order:

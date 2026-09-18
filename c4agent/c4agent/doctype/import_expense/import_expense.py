@@ -226,10 +226,11 @@ class ImportExpense(Document):
 def refresh_import_expense_summaries(shipment_name, exclude_expense=None):
 	"""Refresh shipment base-currency expense summaries."""
 	totals = get_expense_totals(shipment_name, exclude_expense)
+	shipment_meta = frappe.get_meta("Import Shipment")
 	frappe.db.set_value(
 		"Import Shipment",
 		shipment_name,
-		totals,
+		{fieldname: value for fieldname, value in totals.items() if shipment_meta.has_field(fieldname)},
 		update_modified=False,
 	)
 
