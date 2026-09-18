@@ -86,6 +86,20 @@ def confirm_booking(shipment, shipping_line, bill_of_lading, etd, eta):
 
 
 @frappe.whitelist()
+def confirm_departure(shipment, actual_departure_date):
+	"""Save the actual departure date and transition a booked shipment to In Transit."""
+	doc = frappe.get_doc("Import Shipment", shipment)
+	doc.check_permission("write")
+	if doc.shipment_status != "Booked":
+		frappe.throw("Only a Booked shipment can have its departure confirmed")
+	if not actual_departure_date:
+		frappe.throw("Actual Departure Date is required")
+	doc.actual_departure_date = actual_departure_date
+	doc.save()
+	return apply_workflow(doc, "Confirm Departure")
+
+
+@frappe.whitelist()
 def close_import_shipment(shipment, override_reason=None):
 	doc = frappe.get_doc("Import Shipment", shipment)
 	if not ({"Import Manager", "Finance Manager", "System Manager"} & set(frappe.get_roles())):
