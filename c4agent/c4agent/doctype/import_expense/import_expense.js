@@ -2,6 +2,33 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Import Expense", {
+	onload(frm) {
+		if (frm.is_new()) return frm.trigger("fetch_exchange_rate");
+	},
+	posting_date(frm) {
+		return frm.trigger("fetch_exchange_rate");
+	},
+	currency(frm) {
+		return frm.trigger("fetch_exchange_rate");
+	},
+	async fetch_exchange_rate(frm) {
+		const sequence = frm._exchange_rate_sequence = (frm._exchange_rate_sequence || 0) + 1;
+		const {company, currency, posting_date} = frm.doc;
+		if (frm.doc.docstatus !== 0 || !company || !currency || !posting_date) return;
+		const current = () => sequence === frm._exchange_rate_sequence
+			&& frm.doc.docstatus === 0 && frm.doc.company === company
+			&& frm.doc.currency === currency && frm.doc.posting_date === posting_date;
+		const result = await frappe.db.get_value("Company", company, "default_currency");
+		if (!current()) return;
+		const company_currency = result.message.default_currency;
+		const rate = currency === company_currency ? 1 : (await frappe.call({
+			method: "erpnext.setup.utils.get_exchange_rate",
+			args: {from_currency: currency, to_currency: company_currency,
+				transaction_date: posting_date, args: "for_buying"}
+		})).message;
+		if (!current()) return;
+		await frm.set_value({company_currency, exchange_rate: rate || 0});
+	},
 	refresh(frm) {
 		if (frm.doc.expense_type) {
 			const type = frm.doc.expense_type;
@@ -53,8 +80,8 @@ frappe.ui.form.on("Import Expense", {
 		const invoice = await frappe.db.get_doc("Purchase Invoice", name);
 		if (frm.doc.supplier_invoice !== name) return;
 		await frm.set_value({supplier: invoice.supplier, currency: invoice.currency,
-			amount: invoice.disable_rounded_total ? invoice.grand_total : (invoice.rounded_total || invoice.grand_total),
-			exchange_rate: invoice.conversion_rate});
+			amount: invoice.disable_rounded_total ? invoice.grand_total : (invoice.rounded_total || invoice.grand_total)});
+		await frm.trigger("fetch_exchange_rate");
 	},
 
 	async import_shipment(frm) {
@@ -66,6 +93,7 @@ frappe.ui.form.on("Import Expense", {
 		await frm.trigger("expense_type");
 	},
 	async company(frm) {
+		await frm.trigger("fetch_exchange_rate");
 		if (frm.doc.import_shipment) {
 			const name = frm.doc.import_shipment;
 			const result = await frappe.db.get_value("Import Shipment", name, "company");

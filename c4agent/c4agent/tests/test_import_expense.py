@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 from datetime import date
+from unittest.mock import patch
 
 import frappe
 from frappe.tests.utils import FrappeTestCase
@@ -12,6 +13,9 @@ class TestImportExpense(FrappeTestCase):
 
 	def setUp(self):
 		super().setUp()
+		rate_patch = patch("c4agent.c4agent.doctype.import_expense.import_expense.get_exchange_rate", return_value=50)
+		self.exchange_rate_lookup = rate_patch.start()
+		self.addCleanup(rate_patch.stop)
 		self.company = frappe.db.get_value("Company", {"is_group": 0}, "name")
 		self.assertIsNotNone(self.company, "ERPNext test site must contain a test Company")
 		self.company_currency = frappe.db.get_value("Company", self.company, "default_currency")

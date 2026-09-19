@@ -4,6 +4,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt
+from erpnext.setup.utils import get_exchange_rate
 
 
 SUPPORTED_ACCOUNTING_REFERENCES = ("Purchase Invoice", "Journal Entry", "Payment Entry")
@@ -35,7 +36,6 @@ class ImportExpense(Document):
 		self.supplier = invoice.supplier
 		self.currency = invoice.currency
 		self.amount = invoice.grand_total if invoice.disable_rounded_total else invoice.rounded_total or invoice.grand_total
-		self.exchange_rate = invoice.conversion_rate
 
 	def validate(self):
 		self.validate_shipment()
@@ -94,6 +94,16 @@ class ImportExpense(Document):
 			self.currency = self.company_currency
 		if self.currency == self.company_currency:
 			self.exchange_rate = 1
+		elif self.docstatus == 0 or (
+			self.docstatus == 1
+			and self.get_doc_before_save()
+			and self.get_doc_before_save().docstatus == 0
+		):
+			if not self.posting_date:
+				frappe.throw("Posting Date is required to fetch Exchange Rate")
+			self.exchange_rate = flt(get_exchange_rate(
+				self.currency, self.company_currency, self.posting_date, "for_buying"
+			))
 
 		self.base_amount = flt(
 			flt(self.amount) * flt(self.exchange_rate),
